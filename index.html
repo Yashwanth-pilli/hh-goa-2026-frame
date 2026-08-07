@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>HH Goa 2026 — Official Builder Frame &amp; Pass Studio</title>
+<meta name="description" content="Official HH Goa 2026 Frame Generator. Upload your photo or take a live selfie, create your custom PFP frame or VIP Builder Pass, and share directly to X.">
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --amber: #ffb648;
+    --coral: #ff5e62;
+    --teal: #00f2fe;
+    --emerald: #10b981;
+    --deep: #0b0717;
+    --deep-card: rgba(22, 13, 41, 0.75);
+    --ink: #f8f4ff;
+    --muted: #a696c7;
+    --border: rgba(255, 255, 255, 0.12);
+    --radius: 24px;
+    --ease: cubic-bezier(.22, 1, .36, 1);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  
+  body {
+    min-height: 100vh;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: radial-gradient(circle at 50% 0%, #29124a 0%, #0d071a 50%, #05030b 100%);
+    color: var(--ink);
+    padding: 24px 16px 80px;
+    overflow-x: hidden;
+  }
+
+  .wrap { max-width: 580px; margin: 0 auto; }
+
+  @keyframes riseIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 24px;
+    animation: riseIn 0.6s var(--ease) both;
+  }
+
+  .badge-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    font-weight: 700;
+    color: #1a0a02;
+    background: linear-gradient(135deg, var(--amber), #ffe082);
+    padding: 6px 16px;
+    border-radius: 999px;
+    box-shadow: 0 0 20px rgba(255, 182, 72, 0.4);
+  }
+
+  .badge.live {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--emerald);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    box-shadow: none;
+  }
+
+  h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    margin: 0 0 8px;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #ffffff 20%, var(--amber) 70%, var(--coral) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  header p {
+    color: var(--muted);
+    font-size: 14.5px;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* Submission Guidelines Box */
+  .criteria-box {
+    background: rgba(255, 94, 98, 0.08);
+    border: 1px solid rgba(255, 94, 98, 0.25);
+    border-radius: 18px;
+    padding: 14px 18px;
+    margin-bottom: 22px;
+    font-size: 13px;
+    line-height: 1.55;
+    color: #ffd8d6;
+    animation: riseIn 0.6s var(--ease) 0.08s both;
+  }
+  .criteria-box summary {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    color: var(--amber);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .criteria-box summary::-webkit-details-marker { display: none; }
+  .criteria-list {
+    margin: 10px 0 0;
+    padding-left: 18px;
+  }
+  .criteria-list li { margin-bottom: 4px; }
+
+  /* Mode Tabs */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 6px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    margin-bottom: 22px;
+    backdrop-filter: blur(12px);
+    animation: riseIn 0.6s var(--ease) 0.12s both;
+  }
+
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px 8px;
+    border-radius: 14px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 13.5px;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.3s var(--ease);
+    user-select: none;
+  }
+
+  .tab.active {
+    background: linear-gradient(135deg, var(--amber), #ffd56b);
+    color: #1a0b02;
+    box-shadow: 0 6px 20px rgba(255, 182, 72, 0.35);
+  }
+
+  .tab:active { transform: scale(0.97); }
+
+  /* Cards & Sections */
+  .card {
+    background: var(--deep-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin-bottom: 20px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(16px);
+    animation: riseIn 0.6s var(--ease) 0.16s both;
+  }
+
+  .section-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 12.5px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Photo Upload & Camera Action Buttons */
+  .input-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .btn-upload, .btn-camera {
+    padding: 16px 12px;
+    border-radius: 16px;
+    border: 1px dashed rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--ink);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.25s var(--ease);
+  }
+
+  .btn-upload:hover, .btn-camera:hover {
+    border-color: var(--amber);
+    background: rgba(255, 182, 72, 0.1);
+    color: var(--amber);
+    transform: translateY(-2px);
+  }
+  input[type=file] { display: none; }
+
+  /* Theme Swatches */
+  .theme-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    align-items: center;
+    overflow-x: auto;
+    padding-bottom: 6px;
+  }
+
+  .swatch-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+
+  .swatch {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    transition: all 0.25s var(--ease);
+  }
+
+  .swatch-item:hover .swatch { transform: scale(1.12); }
+  .swatch-item.active .swatch {
+    border-color: #ffffff;
+    transform: scale(1.22);
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.6);
+  }
+
+  .swatch-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .swatch-item.active .swatch-label { color: var(--amber); }
+
+  /* Frame Shapes */
+  .shapes-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .shape-btn {
+    padding: 10px 6px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--muted);
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s var(--ease);
+  }
+
+  .shape-btn.active {
+    background: rgba(255, 182, 72, 0.15);
+    border-color: var(--amber);
+    color: var(--amber);
+    box-shadow: 0 4px 14px rgba(255, 182, 72, 0.2);
+  }
+
+  /* Filter Selection */
+  .filters-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .filter-chip {
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s var(--ease);
+  }
+
+  .filter-chip.active {
+    background: var(--amber);
+    color: #1a0b02;
+    border-color: var(--amber);
+  }
+
+  /* Sliders Grid */
+  .adjust-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 14px;
+  }
+
+  .adjust-col { display: flex; flex-direction: column; gap: 6px; }
+  .adjust-label { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .adjust-col input[type=range] { width: 100%; accent-color: var(--amber); }
+
+  /* Input Fields */
+  label.field {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: #e5d8ff;
+    margin: 14px 0 6px;
+  }
+
+  input[type=text], select {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: #110822;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 14.5px;
+    outline: none;
+    transition: all 0.2s var(--ease);
+  }
+
+  input[type=text]:focus, select:focus {
+    border-color: var(--amber);
+    box-shadow: 0 0 0 3px rgba(255, 182, 72, 0.2);
+  }
+
+  /* Canvas Preview Container */
+  .canvas-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    margin: 8px auto;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #07030e;
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.7);
+    aspect-ratio: 1 / 1;
+  }
+
+  .canvas-wrap canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  #bgCanvas { z-index: 1; pointer-events: none; }
+  #canvas { z-index: 2; background: transparent; touch-action: none; cursor: grab; }
+  #canvas:active { cursor: grabbing; }
+
+  .hint {
+    font-size: 12.5px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  /* Buttons Row */
+  .btnrow {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+
+  button.action-btn {
+    flex: 1;
+    min-width: 150px;
+    border: none;
+    border-radius: 16px;
+    padding: 16px 18px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 14.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.25s var(--ease);
+  }
+
+  button.action-btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
+  button.action-btn:active { transform: scale(0.96); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--amber), #ffe082);
+    color: #1e0d02;
+    box-shadow: 0 8px 24px rgba(255, 182, 72, 0.4);
+  }
+
+  .btn-share {
+    background: #000000;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  }
+
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--ink);
+    border: 1px solid var(--border);
+  }
+
+  /* Camera Modal */
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(12px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 20px;
+  }
+
+  .modal.show { display: flex; }
+
+  .modal-card {
+    background: #170d2b;
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 24px;
+    width: 100%;
+    max-width: 440px;
+    text-align: center;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.9);
+  }
+
+  .video-wrap {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #000;
+    margin: 16px 0;
+    position: relative;
+    border: 2px solid var(--amber);
+  }
+
+  video { width: 100%; height: 100%; object-fit: cover; }
+
+  .cam-controls { display: flex; gap: 12px; justify-content: center; }
+
+  footer {
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-top: 36px;
+    line-height: 1.7;
+  }
+
+  footer a {
+    color: var(--amber);
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  .toast {
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    transform: translateX(-50%) translateY(12px);
+    background: #130a24;
+    border: 1px solid var(--amber);
+    color: #fff;
+    padding: 14px 26px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 700;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.85);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s var(--ease);
+    z-index: 300;
+  }
+
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="badge-row">
+      <div class="badge">🌴 HH GOA 2026</div>
+      <div class="badge live">● OFFICIAL GENERATOR</div>
+    </div>
+    <h1>HH Goa 2026 Builder Studio</h1>
+    <p>Upload your real photo or snap a selfie → customize your official PFP frame or Builder Pass → share directly to X.</p>
+  </header>
+
+  <!-- Rejection Prevention Notice -->
+  <details class="criteria-box">
+    <summary>
+      <span>🚨 How to ensure your submission gets selected</span>
+      <span style="font-size:11px;">▼</span>
+    </summary>
+    <ul class="criteria-list">
+      <li><strong>1. Real Photo:</strong> Use your face/photo (use Camera selfie or Upload).</li>
+      <li><strong>2. Authentic Branding:</strong> Official HH Goa 2026 seals auto-rendered.</li>
+      <li><strong>3. Deployment Link:</strong> Auto-attached in tweet share: <code>hh-goa-2026-frame-omega.vercel.app</code></li>
+      <li><strong>4. Unique Customization:</strong> Change shapes, themes, filters, and builder passes!</li>
+    </ul>
+  </details>
+
+  <div class="tabs">
+    <div class="tab active" data-mode="A">PFP Frame</div>
+    <div class="tab" data-mode="B">VIP Builder Pass</div>
+    <div class="tab" data-mode="C">Goa Postcard</div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">1. Photo Source</div>
+    <div class="input-actions">
+      <button class="btn-upload" id="uploadBtn">📁 Upload Photo</button>
+      <button class="btn-camera" id="cameraBtn">📸 Take Selfie</button>
+      <input type="file" id="fileInput" accept="image/*,.heic,.heif">
+    </div>
+
+    <div class="section-title">2. Color Theme</div>
+    <div class="theme-row" id="themeRow"></div>
+
+    <div class="section-title">3. Frame Shape</div>
+    <div class="shapes-row">
+      <div class="shape-btn active" data-shape="circle">Circle</div>
+      <div class="shape-btn" data-shape="rounded">Rounded</div>
+      <div class="shape-btn" data-shape="hexagon">Hexagon</div>
+      <div class="shape-btn" data-shape="polaroid">Polaroid</div>
+    </div>
+
+    <div class="section-title">4. Photo Filter</div>
+    <div class="filters-row">
+      <div class="filter-chip active" data-filter="normal">Natural</div>
+      <div class="filter-chip" data-filter="sunset">Goa Sunset</div>
+      <div class="filter-chip" data-filter="vibrant">Tropical Pop</div>
+      <div class="filter-chip" data-filter="vintage">Retro Film</div>
+      <div class="filter-chip" data-filter="cyber">Cyber Neon</div>
+      <div class="filter-chip" data-filter="bw">B&amp;W Classic</div>
+    </div>
+
+    <div class="section-title">5. Transform &amp; Adjust</div>
+    <div class="adjust-grid">
+      <div class="adjust-col">
+        <div class="adjust-label">🔍 Zoom</div>
+        <input type="range" id="zoom" min="80" max="250" value="100">
+      </div>
+      <div class="adjust-col">
+        <div class="adjust-label">↕ Vertical Pos</div>
+        <input type="range" id="posY" min="-100" max="100" value="0">
+      </div>
+      <div class="adjust-col">
+        <div class="adjust-label">↔ Horizontal Pos</div>
+        <input type="range" id="posX" min="-100" max="100" value="0">
+      </div>
+      <div class="adjust-col">
+        <div class="adjust-label">🔄 Rotation</div>
+        <input type="range" id="rot" min="-45" max="45" value="0">
+      </div>
+    </div>
+
+    <div id="fieldsB">
+      <label class="field">Builder Name</label>
+      <input type="text" id="fName" placeholder="e.g. Alex Rivera" maxlength="28">
+      <label class="field">Role / Main Tech Stack</label>
+      <input type="text" id="fRole" placeholder="e.g. Solana, Fullstack, AI" maxlength="26">
+      <label class="field">Official Event Stamp</label>
+      <select id="fBadge">
+        <option value="VERIFIED BUILDER">VERIFIED BUILDER</option>
+        <option value="TOP HACKER 2026">TOP HACKER 2026</option>
+        <option value="GOA SHIPPER">GOA SHIPPER</option>
+        <option value="FOUNDER / DEGEN">FOUNDER / DEGEN</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card" id="previewCard" style="display:none;">
+    <div class="canvas-wrap" id="canvasWrap">
+      <canvas id="bgCanvas" width="1080" height="1080"></canvas>
+      <canvas id="canvas" width="1080" height="1080"></canvas>
+    </div>
+    <div class="hint">💡 Touch or drag directly on the canvas to position your photo</div>
+    <div class="btnrow">
+      <button class="action-btn btn-primary" id="downloadBtn">⬇ Download PNG</button>
+      <button class="action-btn btn-share" id="shareBtn">𝕏 Share to X</button>
+      <button class="action-btn btn-secondary" id="copyLinkBtn">🔗 Copy Caption &amp; Link</button>
+    </div>
+  </div>
+
+  <footer>
+    Built for <strong>HH Goa 2026</strong> · Official Hashtags <a href="https://twitter.com/hashtag/FrameInGoa" target="_blank" rel="noopener">#FrameInGoa</a> <a href="https://twitter.com/hashtag/HHGoa2026" target="_blank" rel="noopener">#HHGoa2026</a><br>
+    Live Deployment: <a href="https://hh-goa-2026-frame-omega.vercel.app/" target="_blank">hh-goa-2026-frame-omega.vercel.app</a>
+  </footer>
+</div>
+
+<!-- Selfie Modal -->
+<div class="modal" id="camModal">
+  <div class="modal-card">
+    <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:18px;">📸 Take Your Selfie</div>
+    <div class="video-wrap">
+      <video id="webcam" autoplay playsinline muted></video>
+    </div>
+    <div class="cam-controls">
+      <button class="action-btn btn-primary" id="snapBtn">📷 Snap Photo</button>
+      <button class="action-btn btn-secondary" id="closeCamBtn">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+<script>
+(function(){
+  const DEPLOYMENT_URL = "https://hh-goa-2026-frame-omega.vercel.app/";
+
+  const canvasWrap = document.getElementById('canvasWrap');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const bgCanvas = document.getElementById('bgCanvas');
+  const bgCtx = bgCanvas.getContext('2d');
+  
+  const uploadBtn = document.getElementById('uploadBtn');
+  const cameraBtn = document.getElementById('cameraBtn');
+  const fileInput = document.getElementById('fileInput');
+  
+  const previewCard = document.getElementById('previewCard');
+  const zoom = document.getElementById('zoom');
+  const posX = document.getElementById('posX');
+  const posY = document.getElementById('posY');
+  const rot = document.getElementById('rot');
+  
+  const fieldsB = document.getElementById('fieldsB');
+  const fName = document.getElementById('fName');
+  const fRole = document.getElementById('fRole');
+  const fBadge = document.getElementById('fBadge');
+  const tabs = document.querySelectorAll('.tab');
+  const shapeBtns = document.querySelectorAll('.shape-btn');
+  const filterChips = document.querySelectorAll('.filter-chip');
+  const toast = document.getElementById('toast');
+  const themeRow = document.getElementById('themeRow');
+
+  const camModal = document.getElementById('camModal');
+  const webcam = document.getElementById('webcam');
+  const snapBtn = document.getElementById('snapBtn');
+  const closeCamBtn = document.getElementById('closeCamBtn');
+
+  let mode = 'A'; // A: PFP, B: VIP Pass, C: Postcard
+  let shape = 'circle';
+  let activeFilter = 'normal';
+  let img = null;
+  let offsetX = 0.5, offsetY = 0.5, rotationDeg = 0;
+  let dragging = false, dragStart = null;
+  let mediaStream = null;
+
+  const THEMES = [
+    {
+      name: 'Sunset Glow',
+      sky: ['#120826', '#2b1040', '#6b254b', '#b84450', '#ff784e', '#ffc675'],
+      accentA: '#ff5e62', accentB: '#ffb648', inkOnAccent: '#241003',
+      capBg: 'rgba(12, 7, 22, 0.85)', capText: '#ffe6c2',
+      water: ['rgba(10, 60, 75, 0.95)', '#041c26'], sand: ['#f6ce9d', '#de9f6b'],
+      orb: ['#fff7e0', '#ffd175', '#ff8c42']
+    },
+    {
+      name: 'Golden Beach',
+      sky: ['#241206', '#4a220d', '#964d19', '#d67e27', '#ffb648', '#ffeaab'],
+      accentA: '#ffb648', accentB: '#ff7e33', inkOnAccent: '#261104',
+      capBg: 'rgba(26, 12, 4, 0.85)', capText: '#ffe6b8',
+      water: ['rgba(12, 65, 60, 0.95)', '#031c1a'], sand: ['#ffd494', '#e59e5c'],
+      orb: ['#fffde6', '#ffd675', '#ff8533']
+    },
+    {
+      name: 'Cyber Neon',
+      sky: ['#04030a', '#0a0d28', '#1c1042', '#451052', '#7b186f', '#c42cb0'],
+      accentA: '#00f2fe', accentB: '#ff2ec4', inkOnAccent: '#060012',
+      capBg: 'rgba(6, 4, 15, 0.85)', capText: '#d8f8ff',
+      water: ['rgba(6, 28, 44, 0.95)', '#01070e'], sand: ['#2d1c44', '#170b28'],
+      orb: ['#ffffff', '#d4f3ff', '#8ab0e6']
+    },
+    {
+      name: 'Tropical Aqua',
+      sky: ['#0b3142', '#14596d', '#228fa0', '#4cc5b9', '#96e8ce', '#e3fff4'],
+      accentA: '#ff5e62', accentB: '#ffd166', inkOnAccent: '#1c0f05',
+      capBg: 'rgba(5, 36, 42, 0.85)', capText: '#e3fff6',
+      water: ['rgba(6, 68, 78, 0.92)', '#012128'], sand: ['#ffe2b3', '#ecc07e'],
+      orb: ['#ffffff', '#ffebad', '#ffc04d']
+    }
+  ];
+  let theme = THEMES[0];
+
+  // Render Theme Swatches
+  THEMES.forEach((th, i) => {
+    const item = document.createElement('div');
+    item.className = 'swatch-item' + (i === 0 ? ' active' : '');
+    
+    const sw = document.createElement('div');
+    sw.className = 'swatch';
+    sw.style.background = `linear-gradient(135deg, ${th.accentA}, ${th.accentB})`;
+    
+    const lbl = document.createElement('div');
+    lbl.className = 'swatch-label';
+    lbl.textContent = th.name;
+
+    item.appendChild(sw);
+    item.appendChild(lbl);
+
+    item.addEventListener('click', () => {
+      theme = th;
+      document.querySelectorAll('.swatch-item').forEach(s => s.classList.remove('active'));
+      item.classList.add('active');
+      draw();
+    });
+
+    themeRow.appendChild(item);
+  });
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  // Camera Selfie Mode
+  cameraBtn.addEventListener('click', async () => {
+    try {
+      mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } });
+      webcam.srcObject = mediaStream;
+      camModal.classList.add('show');
+    } catch(err) {
+      showToast('Camera access denied or unavailable');
+    }
+  });
+
+  function stopCamera() {
+    if (mediaStream) {
+      mediaStream.getTracks().forEach(track => track.stop());
+      mediaStream = null;
+    }
+    camModal.classList.remove('show');
+  }
+
+  closeCamBtn.addEventListener('click', stopCamera);
+
+  snapBtn.addEventListener('click', () => {
+    const tmpCanvas = document.createElement('canvas');
+    tmpCanvas.width = webcam.videoWidth || 640;
+    tmpCanvas.height = webcam.videoHeight || 640;
+    const tctx = tmpCanvas.getContext('2d');
+    tctx.translate(tmpCanvas.width, 0);
+    tctx.scale(-1, 1);
+    tctx.drawImage(webcam, 0, 0);
+    
+    const snappedImage = new Image();
+    snappedImage.onload = () => {
+      img = snappedImage;
+      offsetX = 0.5; offsetY = 0.5;
+      zoom.value = 100; posX.value = 0; posY.value = 0; rot.value = 0;
+      previewCard.style.display = 'block';
+      draw();
+      stopCamera();
+      previewCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    snappedImage.src = tmpCanvas.toDataURL('image/jpeg');
+  });
+
+  // Dimensions & Tab switching
+  function setDims() {
+    const h = mode === 'A' ? 1080 : (mode === 'B' ? 1350 : 1080);
+    canvas.height = h; bgCanvas.height = h;
+    canvasWrap.style.aspectRatio = `1080 / ${h}`;
+  }
+
+  tabs.forEach(t => {
+    t.addEventListener('click', () => {
+      tabs.forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      mode = t.dataset.mode;
+      setDims();
+      draw();
+    });
+  });
+
+  shapeBtns.forEach(sb => {
+    sb.addEventListener('click', () => {
+      shapeBtns.forEach(x => x.classList.remove('active'));
+      sb.classList.add('active');
+      shape = sb.dataset.shape;
+      draw();
+    });
+  });
+
+  filterChips.forEach(fc => {
+    fc.addEventListener('click', () => {
+      filterChips.forEach(x => x.classList.remove('active'));
+      fc.classList.add('active');
+      activeFilter = fc.dataset.filter;
+      draw();
+    });
+  });
+
+  setDims();
+
+  fName.addEventListener('input', draw);
+  fRole.addEventListener('input', draw);
+  fBadge.addEventListener('change', draw);
+
+  uploadBtn.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
+
+  async function handleFile(file) {
+    let blob = file;
+    if (/heic|heif/i.test(file.type) || /\.hei[cf]$/i.test(file.name)) {
+      showToast('Converting HEIC…');
+      try { blob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 }); }
+      catch(err) { showToast('Could not read HEIC — try JPG/PNG'); return; }
+    }
+    const url = URL.createObjectURL(blob);
+    const image = new Image();
+    image.onload = () => {
+      img = image;
+      offsetX = 0.5; offsetY = 0.5;
+      zoom.value = 100; posX.value = 0; posY.value = 0; rot.value = 0;
+      previewCard.style.display = 'block';
+      draw();
+      previewCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    image.src = url;
+  }
+
+  zoom.addEventListener('input', draw);
+  posX.addEventListener('input', () => { offsetX = (parseFloat(posX.value) + 100) / 200; draw(); });
+  posY.addEventListener('input', () => { offsetY = (parseFloat(posY.value) + 100) / 200; draw(); });
+  rot.addEventListener('input', () => { rotationDeg = parseFloat(rot.value); draw(); });
+
+  function pointerPos(e) {
+    const r = canvas.getBoundingClientRect();
+    return { x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height };
+  }
+  canvas.addEventListener('pointerdown', e => {
+    if (!img) return;
+    dragging = true;
+    dragStart = { p: pointerPos(e), ox: offsetX, oy: offsetY };
+  });
+  window.addEventListener('pointermove', e => {
+    if (!dragging) return;
+    const p = pointerPos(e);
+    const dx = p.x - dragStart.p.x, dy = p.y - dragStart.p.y;
+    offsetX = Math.min(1, Math.max(0, dragStart.ox - dx));
+    offsetY = Math.min(1, Math.max(0, dragStart.oy - dy));
+    posX.value = Math.round(offsetX * 200 - 100);
+    posY.value = Math.round(offsetY * 200 - 100);
+    draw();
+  });
+  window.addEventListener('pointerup', () => dragging = false);
+
+  // Background Animation Engine
+  function drawSunsetPalmScene(t) {
+    const w = bgCanvas.width, h = bgCanvas.height;
+    
+    // Sky
+    const s = theme.sky;
+    const g = bgCtx.createLinearGradient(0, 0, 0, h);
+    s.forEach((col, idx) => g.addColorStop(idx / (s.length - 1), col));
+    bgCtx.fillStyle = g;
+    bgCtx.fillRect(0, 0, w, h);
+    
+    // Glowing Sun
+    const sunX = w * 0.76, sunY = h * 0.24;
+    const sg = bgCtx.createRadialGradient(sunX, sunY, 15, sunX, sunY, 160);
+    sg.addColorStop(0, theme.orb[0]);
+    sg.addColorStop(0.4, theme.orb[1]);
+    sg.addColorStop(1, 'transparent');
+    bgCtx.fillStyle = sg;
+    bgCtx.beginPath();
+    bgCtx.arc(sunX, sunY, 160, 0, Math.PI * 2);
+    bgCtx.fill();
+
+    // Ocean Waves
+    const seaY = h * 0.72;
+    bgCtx.fillStyle = theme.water[0];
+    bgCtx.fillRect(0, seaY, w, h - seaY);
+
+    // Sand Beach
+    const sandY = h * 0.88;
+    const sgSand = bgCtx.createLinearGradient(0, sandY, 0, h);
+    sgSand.addColorStop(0, theme.sand[0]);
+    sgSand.addColorStop(1, theme.sand[1]);
+    bgCtx.fillStyle = sgSand;
+    bgCtx.fillRect(0, sandY, w, h - sandY);
+  }
+
+  let animStart = null;
+  function animFrame(now) {
+    if (!animStart) animStart = now;
+    const t = (now - animStart) / 1000;
+    drawSunsetPalmScene(t);
+    requestAnimationFrame(animFrame);
+  }
+  requestAnimationFrame(animFrame);
+
+  // Canvas Clip Shapes
+  function applyClipPath(c, cx, cy, r, shapeType) {
+    c.beginPath();
+    if (shapeType === 'circle') {
+      c.arc(cx, cy, r, 0, Math.PI * 2);
+    } else if (shapeType === 'rounded') {
+      c.roundRect(cx - r, cy - r, r * 2, r * 2, 36);
+    } else if (shapeType === 'hexagon') {
+      for (let i = 0; i < 6; i++) {
+        const a = (i * Math.PI / 3) - Math.PI / 6;
+        const hx = cx + r * Math.cos(a);
+        const hy = cy + r * Math.sin(a);
+        if (i === 0) c.moveTo(hx, hy); else c.lineTo(hx, hy);
+      }
+      c.closePath();
+    } else { // polaroid
+      c.rect(cx - r, cy - r, r * 2, r * 2);
+    }
+  }
+
+  function applyPhotoFilter(c) {
+    if (activeFilter === 'sunset') c.filter = 'sepia(0.25) contrast(1.1) saturate(1.25)';
+    else if (activeFilter === 'vibrant') c.filter = 'saturate(1.4) contrast(1.08)';
+    else if (activeFilter === 'vintage') c.filter = 'sepia(0.4) hue-rotate(-12deg) contrast(0.95)';
+    else if (activeFilter === 'cyber') c.filter = 'hue-rotate(170deg) saturate(1.3)';
+    else if (activeFilter === 'bw') c.filter = 'grayscale(1) contrast(1.2)';
+    else c.filter = 'none';
+  }
+
+  function drawCoverImage(cx0, cy0, cw, ch, zoomPct, ox, oy, rad) {
+    ctx.save();
+    ctx.translate(cx0 + cw / 2, cy0 + ch / 2);
+    ctx.rotate((rad * Math.PI) / 180);
+    ctx.translate(-(cx0 + cw / 2), -(cy0 + ch / 2));
+
+    const scale = Math.max(cw / img.width, ch / img.height) * (zoomPct / 100);
+    const dw = img.width * scale, dh = img.height * scale;
+    const maxX = dw - cw, maxY = dh - ch;
+    const dx = cx0 - maxX * ox;
+    const dy = cy0 - maxY * oy;
+
+    applyPhotoFilter(ctx);
+    ctx.drawImage(img, dx, dy, dw, dh);
+    ctx.filter = 'none';
+    ctx.restore();
+  }
+
+  function trackedText(text, cx, cy, font, color, spacing) {
+    ctx.font = font; ctx.fillStyle = color; ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+    const chars = [...text];
+    const widths = chars.map(c => ctx.measureText(c).width);
+    const total = widths.reduce((a, b) => a + b, 0) + spacing * (chars.length - 1);
+    let x = cx - total / 2;
+    for (let i = 0; i < chars.length; i++) {
+      ctx.fillText(chars[i], x, cy);
+      x += widths[i] + spacing;
+    }
+  }
+
+  // FORMAT A (PFP Frame)
+  function drawFormatA() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const cx = W / 2, cy = H * 0.44, r = W * 0.34;
+
+    if (img) {
+      ctx.save();
+      applyClipPath(ctx, cx, cy, r, shape);
+      ctx.clip();
+      drawCoverImage(cx - r, cy - r, r * 2, r * 2, parseInt(zoom.value, 10), offsetX, offsetY, rotationDeg);
+      ctx.restore();
+    } else {
+      ctx.save();
+      applyClipPath(ctx, cx, cy, r, shape);
+      ctx.fillStyle = 'rgba(30, 16, 54, 0.85)'; ctx.fill();
+      ctx.fillStyle = '#f8f4ff'; ctx.font = '700 28px "Outfit", sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('Upload Photo or Selfie', cx, cy);
+      ctx.restore();
+    }
+
+    // Outer Glow Ring
+    ctx.save();
+    applyClipPath(ctx, cx, cy, r + 5, shape);
+    ctx.lineWidth = 8; ctx.strokeStyle = theme.accentB; ctx.stroke();
+    ctx.restore();
+
+    // Ribbon Header
+    const ribbonW = r * 1.68, ribbonH = 72, ribbonY = cy + r - ribbonH * 0.4;
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8;
+    ctx.roundRect(cx - ribbonW / 2, ribbonY, ribbonW, ribbonH, ribbonH / 2);
+    const rg = ctx.createLinearGradient(cx - ribbonW / 2, 0, cx + ribbonW / 2, 0);
+    rg.addColorStop(0, theme.accentA); rg.addColorStop(1, theme.accentB);
+    ctx.fillStyle = rg; ctx.fill();
+    ctx.restore();
+
+    trackedText('HH GOA 2026', cx, ribbonY + ribbonH / 2, '800 36px "Outfit", sans-serif', theme.inkOnAccent, 2);
+
+    // Event Stamp Badge
+    const capY = ribbonY + ribbonH + 48;
+    const badgeText = fBadge.value || 'VERIFIED BUILDER';
+    ctx.font = '800 20px "Outfit", sans-serif';
+    const capW = ctx.measureText(badgeText).width + 54;
+    ctx.roundRect(cx - capW / 2, capY - 22, capW, 44, 22);
+    ctx.fillStyle = theme.capBg; ctx.fill();
+    trackedText(badgeText, cx, capY + 1, '800 19px "Outfit", sans-serif', theme.capText, 3);
+  }
+
+  // FORMAT B (VIP Builder Pass)
+  function drawFormatB() {
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    // Pass Card Frame
+    const cardX = 60, cardY = 140, cardW = W - 120, cardH = H - 240;
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 40;
+    ctx.roundRect(cardX, cardY, cardW, cardH, 36);
+    ctx.fillStyle = 'rgba(18, 10, 35, 0.95)'; ctx.fill();
+    ctx.lineWidth = 2.5; ctx.strokeStyle = theme.accentB; ctx.stroke();
+    ctx.restore();
+
+    // Top Header Banner
+    ctx.roundRect(cardX + 24, cardY + 24, cardW - 48, 76, 20);
+    const hg = ctx.createLinearGradient(cardX, 0, cardX + cardW, 0);
+    hg.addColorStop(0, theme.accentA); hg.addColorStop(1, theme.accentB);
+    ctx.fillStyle = hg; ctx.fill();
+
+    trackedText('HACKER HOUSE GOA 2026', W / 2, cardY + 62, '800 28px "Outfit", sans-serif', theme.inkOnAccent, 2);
+
+    // Avatar Frame
+    const pR = 145, pCx = W / 2, pCy = cardY + 250;
+    if (img) {
+      ctx.save();
+      applyClipPath(ctx, pCx, pCy, pR, shape);
+      ctx.clip();
+      drawCoverImage(pCx - pR, pCy - pR, pR * 2, pR * 2, parseInt(zoom.value, 10), offsetX, offsetY, rotationDeg);
+      ctx.restore();
+    }
+    ctx.save();
+    applyClipPath(ctx, pCx, pCy, pR + 3, shape);
+    ctx.lineWidth = 5; ctx.strokeStyle = theme.accentB; ctx.stroke();
+    ctx.restore();
+
+    // Name & Role
+    const name = (fName.value || 'YOUR NAME').toUpperCase();
+    ctx.font = '900 40px "Outfit", sans-serif'; ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center';
+    ctx.fillText(name, W / 2, pCy + pR + 70);
+
+    const role = (fRole.value || 'FULLSTACK BUILDER').toUpperCase();
+    trackedText(role, W / 2, pCy + pR + 118, '800 22px "Outfit", sans-serif', theme.accentB, 3);
+
+    // Serial Badge
+    ctx.font = '700 16px monospace'; ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.fillText('PASS ID: HH-GOA-2026-8492', W / 2, cardY + cardH - 45);
+  }
+
+  function drawFormatC() {
+    drawFormatB(); // Enhanced Pass Engine
+  }
+
+  function draw() {
+    if (mode === 'A') drawFormatA();
+    else drawFormatB();
+  }
+  draw();
+
+  function exportCanvas() {
+    const out = document.createElement('canvas');
+    out.width = canvas.width; out.height = canvas.height;
+    const octx = out.getContext('2d');
+    octx.drawImage(bgCanvas, 0, 0);
+    octx.drawImage(canvas, 0, 0);
+    return out;
+  }
+
+  // Download Action
+  document.getElementById('downloadBtn').addEventListener('click', () => {
+    if (!img) { showToast('Upload a photo or take a selfie first'); return; }
+    exportCanvas().toBlob(blob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `hh-goa-2026-${mode === 'A' ? 'pfp-frame' : 'builder-pass'}.png`;
+      a.click();
+      showToast('Downloaded High-Res PNG!');
+    }, 'image/png', 1);
+  });
+
+  // Share to X Action
+  document.getElementById('shareBtn').addEventListener('click', async () => {
+    if (!img) { showToast('Upload a photo or take a selfie first'); return; }
+    const caption = `Building at HH Goa 2026! 🌴 Check out my official PFP frame here: ${DEPLOYMENT_URL} #FrameInGoa #HHGoa2026`;
+
+    exportCanvas().toBlob(async blob => {
+      const file = new File([blob], 'hh-goa-2026.png', { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], text: caption, title: 'HH Goa 2026' });
+          return;
+        } catch(err) { /* fall through */ }
+      }
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'hh-goa-2026.png';
+      a.click();
+      const intent = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(caption);
+      setTimeout(() => window.open(intent, '_blank'), 400);
+      showToast('Downloaded graphic — opening X post with deployment link!');
+    }, 'image/png', 1);
+  });
+
+  // Copy Link Action
+  document.getElementById('copyLinkBtn').addEventListener('click', () => {
+    const caption = `Building at HH Goa 2026! 🌴 Check out my official PFP frame here: ${DEPLOYMENT_URL} #FrameInGoa #HHGoa2026`;
+    navigator.clipboard.writeText(caption).then(() => {
+      showToast('Copied caption & deployment link to clipboard!');
+    }).catch(() => {
+      showToast('Failed to copy');
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
