@@ -525,6 +525,27 @@
   let mediaStream = null;
   let isAnimeOverlay = false;
 
+  // UNIVERSAL ROUNDRECT POLYFILL TO PREVENT MOBILE CANVAS CRASHES
+  function drawRoundRect(c, x, y, w, h, r) {
+    if (c.roundRect) {
+      c.beginPath();
+      c.roundRect(x, y, w, h, r);
+      return;
+    }
+    const rad = Math.min(r, w / 2, h / 2);
+    c.beginPath();
+    c.moveTo(x + rad, y);
+    c.lineTo(x + w - rad, y);
+    c.arcTo(x + w, y, x + w, y + rad, rad);
+    c.lineTo(x + w, y + h - rad);
+    c.arcTo(x + w, y + h, x + w - rad, y + h, rad);
+    c.lineTo(x + rad, y + h);
+    c.arcTo(x, y + h, x, y + h - rad, rad);
+    c.lineTo(x, y + rad);
+    c.arcTo(x, y, x + rad, y, rad);
+    c.closePath();
+  }
+
   const THEMES = [
     {
       name: 'Goa Sunset Anime',
@@ -609,11 +630,11 @@
     cx.beginPath(); cx.arc(300, 220, 120, Math.PI, Math.PI * 2); cx.fill();
     cx.beginPath(); cx.moveTo(200, 220); cx.lineTo(240, 280); cx.lineTo(260, 230); cx.lineTo(290, 290); cx.lineTo(310, 230); cx.lineTo(350, 285); cx.lineTo(400, 220); cx.fill();
 
-    cx.fillStyle = '#110424'; cx.roundRect(220, 250, 160, 55, 14); cx.fill();
+    cx.fillStyle = '#110424'; drawRoundRect(cx, 220, 250, 160, 55, 14); cx.fill();
     cx.lineWidth = 3; cx.strokeStyle = '#00f2fe'; cx.stroke();
     const lg = cx.createLinearGradient(220, 250, 380, 305);
     lg.addColorStop(0, 'rgba(0, 242, 254, 0.7)'); lg.addColorStop(0.5, 'rgba(255, 46, 196, 0.7)'); lg.addColorStop(1, 'transparent');
-    cx.fillStyle = lg; cx.roundRect(224, 254, 152, 47, 10); cx.fill();
+    cx.fillStyle = lg; drawRoundRect(cx, 224, 254, 152, 47, 10); cx.fill();
 
     cx.lineWidth = 4; cx.strokeStyle = '#853216';
     cx.beginPath(); cx.arc(300, 335, 20, 0.1, Math.PI - 0.1); cx.stroke();
@@ -824,7 +845,7 @@
     if (shapeType === 'circle') {
       c.arc(cx, cy, r, 0, Math.PI * 2);
     } else if (shapeType === 'rounded') {
-      c.roundRect(cx - r, cy - r, r * 2, r * 2, 40);
+      drawRoundRect(c, cx - r, cy - r, r * 2, r * 2, 40);
     } else if (shapeType === 'hexagon') {
       for (let i = 0; i < 6; i++) {
         const a = (i * Math.PI / 3) - Math.PI / 6;
@@ -932,7 +953,7 @@
     ctx.save();
     ctx.shadowColor = 'rgba(0,0,0,0.65)'; ctx.shadowBlur = 26; ctx.shadowOffsetY = 8;
     
-    ctx.roundRect(cx - ribbonW / 2, ribbonY, ribbonW, ribbonH, ribbonH / 2);
+    drawRoundRect(ctx, cx - ribbonW / 2, ribbonY, ribbonW, ribbonH, ribbonH / 2);
     const rg = ctx.createLinearGradient(cx - ribbonW / 2, 0, cx + ribbonW / 2, 0);
     rg.addColorStop(0, theme.accentA || '#ff5e62');
     rg.addColorStop(1, theme.accentB || '#ffb648');
@@ -949,7 +970,7 @@
     ctx.font = 'bold 18px Arial, sans-serif';
     const capW = ctx.measureText(badgeText).width + 48;
     ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 14;
-    ctx.roundRect(cx - capW / 2, capY - 20, capW, 40, 20);
+    drawRoundRect(ctx, cx - capW / 2, capY - 20, capW, 40, 20);
     ctx.fillStyle = theme.capBg || '#100720'; ctx.fill();
     ctx.lineWidth = 2; ctx.strokeStyle = theme.accentB || '#ffb648'; ctx.stroke();
     ctx.restore();
@@ -965,14 +986,14 @@
     const cardX = 60, cardY = 140, cardW = W - 120, cardH = H - 240;
     ctx.save();
     ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 40;
-    ctx.roundRect(cardX, cardY, cardW, cardH, 36);
+    drawRoundRect(ctx, cardX, cardY, cardW, cardH, 36);
     ctx.fillStyle = 'rgba(18, 10, 35, 0.95)'; ctx.fill();
     ctx.lineWidth = 2.5; ctx.strokeStyle = theme.accentB; ctx.stroke();
     ctx.restore();
 
     // Header Banner
     ctx.save();
-    ctx.roundRect(cardX + 22, cardY + 22, cardW - 44, 80, 22);
+    drawRoundRect(ctx, cardX + 22, cardY + 22, cardW - 44, 80, 22);
     const hg = ctx.createLinearGradient(cardX, 0, cardX + cardW, 0);
     hg.addColorStop(0, theme.accentA); hg.addColorStop(1, theme.accentB);
     ctx.fillStyle = hg; ctx.fill();
