@@ -737,7 +737,6 @@
   uploadBtn.addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
 
-  // 100% Reliable File Reader Data URL for Mobile & WebViews
   async function handleFile(file) {
     if (!file) return;
     let blob = file;
@@ -843,6 +842,7 @@
     return Math.max(10, parseInt(zoom ? zoom.value : '100', 10) || 100);
   }
 
+  // FAIL-SAFE PHOTO DRAWING INSIDE CLIPPED SHAPE
   function drawCoverImage(cx0, cy0, cw, ch, zoomPct, ox, oy, rad) {
     if (!img || !img.width || !img.height) return;
 
@@ -866,19 +866,17 @@
     const dy = centerY - dh / 2;
 
     ctx.drawImage(img, dx, dy, dw, dh);
-    ctx.restore();
 
     if (isAnimeOverlay) {
-      ctx.save();
       ctx.globalCompositeOperation = 'overlay';
       ctx.fillStyle = theme.accentA || '#ff5e62';
       ctx.globalAlpha = 0.12;
-      ctx.fillRect(cx0, cy0, cw, ch);
-      ctx.restore();
+      ctx.fillRect(dx, dy, dw, dh);
     }
+
+    ctx.restore();
   }
 
-  // 100% RELIABLE OUTLINE TEXT DRAWING
   function drawOutlineText(text, cx, cy, fontStr, fillColor, strokeColor, strokeWidth) {
     ctx.save();
     ctx.font = fontStr;
@@ -934,7 +932,6 @@
     ctx.save();
     ctx.shadowColor = 'rgba(0,0,0,0.65)'; ctx.shadowBlur = 26; ctx.shadowOffsetY = 8;
     
-    // Ribbon background gradient
     ctx.roundRect(cx - ribbonW / 2, ribbonY, ribbonW, ribbonH, ribbonH / 2);
     const rg = ctx.createLinearGradient(cx - ribbonW / 2, 0, cx + ribbonW / 2, 0);
     rg.addColorStop(0, theme.accentA || '#ff5e62');
@@ -943,7 +940,6 @@
     ctx.lineWidth = 3; ctx.strokeStyle = '#ffffff'; ctx.stroke();
     ctx.restore();
 
-    // Bold Stroked Outline Text "HH GOA 2026"
     drawOutlineText('HH GOA 2026', cx, ribbonY + ribbonH / 2, 'bold 36px Arial, sans-serif', '#ffffff', '#000000', 8);
 
     // 4. Event Stamp Badge ("VERIFIED BUILDER")
