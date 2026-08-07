@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>HH Goa 2026 — Frame &amp; Pass Generator</title>
-<meta name="description" content="Official HH Goa 2026 PFP Frame & Builder Pass Generator. Upload photo, customize frame, download & share to X.">
+<title>HH Goa 2026 — Frame &amp; Pass Studio</title>
+<meta name="description" content="Official HH Goa 2026 PFP Frame & Builder Pass Generator with automatic Anime Vibe detection.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,9 +15,10 @@
     --amber: #ffb648;
     --coral: #ff5e62;
     --cyan: #00f2fe;
+    --pink: #ff2ec4;
     --deep: #0a0514;
-    --card: rgba(20, 11, 36, 0.85);
-    --border: rgba(255, 255, 255, 0.14);
+    --card: rgba(20, 11, 36, 0.88);
+    --border: rgba(255, 255, 255, 0.15);
     --ink: #f8f4ff;
     --muted: #a797c6;
     --ease: cubic-bezier(.22, 1, .36, 1);
@@ -29,7 +30,7 @@
   body {
     min-height: 100vh;
     font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-    background: radial-gradient(circle at 50% 0%, #2a1147 0%, #0d0618 60%, #05020a 100%);
+    background: radial-gradient(circle at 50% 0%, #2c104d 0%, #0d0618 60%, #05020a 100%);
     color: var(--ink);
     padding: 16px 12px 60px;
     overflow-x: hidden;
@@ -37,10 +38,7 @@
 
   .wrap { max-width: 520px; margin: 0 auto; }
 
-  header {
-    text-align: center;
-    margin-bottom: 16px;
-  }
+  header { text-align: center; margin-bottom: 14px; }
 
   .top-badge {
     display: inline-flex;
@@ -64,16 +62,12 @@
     font-weight: 900;
     margin: 0 0 4px;
     letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #ffffff 30%, var(--amber) 70%, var(--coral) 100%);
+    background: linear-gradient(135deg, #ffffff 30%, var(--amber) 70%, var(--pink) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
-  header p {
-    color: var(--muted);
-    font-size: 13.5px;
-    margin: 0;
-  }
+  header p { color: var(--muted); font-size: 13.5px; margin: 0; }
 
   /* Mode Switcher Tabs */
   .tabs {
@@ -83,7 +77,7 @@
     padding: 5px;
     border-radius: 16px;
     border: 1px solid var(--border);
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     backdrop-filter: blur(12px);
   }
 
@@ -113,8 +107,8 @@
     border: 1px solid var(--border);
     border-radius: 24px;
     padding: 16px;
-    margin-bottom: 16px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+    margin-bottom: 14px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
     backdrop-filter: blur(16px);
   }
 
@@ -126,7 +120,7 @@
     border-radius: 18px;
     overflow: hidden;
     background: #06020c;
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.85);
     aspect-ratio: 1 / 1;
   }
 
@@ -149,13 +143,28 @@
     margin-top: 8px;
   }
 
+  /* Auto Vibe Banner */
+  .vibe-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 46, 196, 0.12);
+    border: 1px solid rgba(255, 46, 196, 0.3);
+    border-radius: 12px;
+    padding: 8px 14px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #ffb8f3;
+  }
+
   /* Main Controls Card */
   .controls-card {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 24px;
     padding: 18px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     box-shadow: 0 12px 36px rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(16px);
   }
@@ -170,12 +179,12 @@
     margin-bottom: 10px;
   }
 
-  /* Upload & Camera Buttons */
+  /* Action Buttons */
   .action-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
 
   .btn-upload, .btn-camera {
@@ -206,7 +215,7 @@
   .theme-row {
     display: flex;
     gap: 10px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     overflow-x: auto;
     padding-bottom: 4px;
   }
@@ -233,7 +242,7 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 8px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
 
   .shape-btn {
@@ -414,7 +423,7 @@
   <header>
     <div class="top-badge">🌴 HH GOA 2026</div>
     <h1>HH Goa 2026 Generator</h1>
-    <p>Create your branded PFP frame or Builder Pass instantly.</p>
+    <p>Upload a photo — automatic Anime Vibe &amp; PFP Frame styling!</p>
   </header>
 
   <div class="tabs">
@@ -422,13 +431,18 @@
     <div class="tab" data-mode="B">VIP Builder Pass</div>
   </div>
 
-  <!-- Always Visible Preview Display -->
+  <!-- Preview Canvas Display -->
   <div class="preview-card">
+    <div class="vibe-banner" id="vibeBanner">
+      <span>✨ Auto Vibe: <strong id="vibeName">Anime Sunset Vibe</strong></span>
+      <span style="font-size:10px;opacity:0.8;">Auto-Detected</span>
+    </div>
+
     <div class="canvas-wrap" id="canvasWrap">
       <canvas id="bgCanvas" width="1080" height="1080"></canvas>
       <canvas id="canvas" width="1080" height="1080"></canvas>
     </div>
-    <div class="hint">💡 Drag or touch directly on canvas to reposition photo</div>
+    <div class="hint">💡 Touch or drag directly on canvas to position photo</div>
 
     <div class="btn-row">
       <button class="main-btn btn-dl" id="downloadBtn">⬇ Download PNG</button>
@@ -476,7 +490,7 @@
       </div>
     </div>
 
-    <div id="fieldsB">
+    <div id="fieldsB" style="display:none;">
       <label class="field-title">Builder Name</label>
       <input type="text" id="fName" placeholder="e.g. Alex Rivera" maxlength="28">
       <label class="field-title">Role / Tech Stack</label>
@@ -541,6 +555,7 @@
   const shapeBtns = document.querySelectorAll('.shape-btn');
   const toast = document.getElementById('toast');
   const themeRow = document.getElementById('themeRow');
+  const vibeNameEl = document.getElementById('vibeName');
 
   const camModal = document.getElementById('camModal');
   const webcam = document.getElementById('webcam');
@@ -553,66 +568,49 @@
   let offsetX = 0.5, offsetY = 0.5, rotationDeg = 0;
   let dragging = false, dragStart = null;
   let mediaStream = null;
-
-  // Create default fallback avatar canvas image
-  function createDefaultAvatar() {
-    const c = document.createElement('canvas');
-    c.width = 400; c.height = 400;
-    const cx = c.getContext('2d');
-    
-    // Background gradient
-    const g = cx.createLinearGradient(0,0,400,400);
-    g.addColorStop(0, '#2d1254'); g.addColorStop(1, '#561d70');
-    cx.fillStyle = g; cx.fillRect(0,0,400,400);
-
-    // Avatar silhouette
-    cx.fillStyle = '#ffb648';
-    cx.beginPath(); cx.arc(200, 150, 60, 0, Math.PI*2); cx.fill();
-    cx.beginPath(); cx.arc(200, 360, 110, 0, Math.PI*2); cx.fill();
-
-    const avatarImg = new Image();
-    avatarImg.onload = () => { img = avatarImg; draw(); };
-    avatarImg.src = c.toDataURL();
-  }
-  createDefaultAvatar();
+  let currentAnimeFilter = 'saturate(1.3) contrast(1.1) brightness(1.04)';
 
   const THEMES = [
     {
-      name: 'Sunset Glow',
-      sky: ['#120826', '#2b1040', '#6b254b', '#b84450', '#ff784e', '#ffc675'],
+      name: 'Anime Sunset Vibe',
+      sky: ['#140826', '#321045', '#7a2552', '#c44558', '#ff7b4e', '#ffc978'],
       accentA: '#ff5e62', accentB: '#ffb648', inkOnAccent: '#241003',
-      capBg: 'rgba(12, 7, 22, 0.85)', capText: '#ffe6c2',
+      capBg: 'rgba(12, 7, 22, 0.88)', capText: '#ffe6c2',
       water: ['rgba(10, 60, 75, 0.95)', '#041c26'], sand: ['#f6ce9d', '#de9f6b'],
-      orb: ['#fff7e0', '#ffd175', '#ff8c42']
+      orb: ['#fff7e0', '#ffd175', '#ff8c42'],
+      filter: 'saturate(1.35) contrast(1.1) brightness(1.05)'
     },
     {
-      name: 'Golden Hour',
-      sky: ['#241206', '#4a220d', '#964d19', '#d67e27', '#ffb648', '#ffeaab'],
-      accentA: '#ffb648', accentB: '#ff7e33', inkOnAccent: '#261104',
-      capBg: 'rgba(26, 12, 4, 0.85)', capText: '#ffe6b8',
-      water: ['rgba(12, 65, 60, 0.95)', '#031c1a'], sand: ['#ffd494', '#e59e5c'],
-      orb: ['#fffde6', '#ffd675', '#ff8533']
-    },
-    {
-      name: 'Cyber Neon',
-      sky: ['#04030a', '#0a0d28', '#1c1042', '#451052', '#7b186f', '#c42cb0'],
+      name: 'Neon Sakura Vibe',
+      sky: ['#06030c', '#120b30', '#2a104f', '#611068', '#a81895', '#ff38ca'],
       accentA: '#00f2fe', accentB: '#ff2ec4', inkOnAccent: '#060012',
-      capBg: 'rgba(6, 4, 15, 0.85)', capText: '#d8f8ff',
+      capBg: 'rgba(6, 4, 15, 0.88)', capText: '#d8f8ff',
       water: ['rgba(6, 28, 44, 0.95)', '#01070e'], sand: ['#2d1c44', '#170b28'],
-      orb: ['#ffffff', '#d4f3ff', '#8ab0e6']
+      orb: ['#ffffff', '#d4f3ff', '#8ab0e6'],
+      filter: 'hue-rotate(320deg) saturate(1.4) contrast(1.15)'
     },
     {
-      name: 'Tropical Aqua',
+      name: 'Tropical Aqua Vibe',
       sky: ['#0b3142', '#14596d', '#228fa0', '#4cc5b9', '#96e8ce', '#e3fff4'],
       accentA: '#ff5e62', accentB: '#ffd166', inkOnAccent: '#1c0f05',
-      capBg: 'rgba(5, 36, 42, 0.85)', capText: '#e3fff6',
+      capBg: 'rgba(5, 36, 42, 0.88)', capText: '#e3fff6',
       water: ['rgba(6, 68, 78, 0.92)', '#012128'], sand: ['#ffe2b3', '#ecc07e'],
-      orb: ['#ffffff', '#ffebad', '#ffc04d']
+      orb: ['#ffffff', '#ffebad', '#ffc04d'],
+      filter: 'saturate(1.3) contrast(1.08) hue-rotate(10deg)'
+    },
+    {
+      name: 'Golden Hour Vibe',
+      sky: ['#241206', '#4a220d', '#964d19', '#d67e27', '#ffb648', '#ffeaab'],
+      accentA: '#ffb648', accentB: '#ff7e33', inkOnAccent: '#261104',
+      capBg: 'rgba(26, 12, 4, 0.88)', capText: '#ffe6b8',
+      water: ['rgba(12, 65, 60, 0.95)', '#031c1a'], sand: ['#ffd494', '#e59e5c'],
+      orb: ['#fffde6', '#ffd675', '#ff8533'],
+      filter: 'sepia(0.2) saturate(1.35) contrast(1.1)'
     }
   ];
   let theme = THEMES[0];
 
-  THEMES.forEach((th, i) => {
+  const swatchEls = THEMES.map((th, i) => {
     const sw = document.createElement('div');
     sw.className = 'swatch' + (i === 0 ? ' active' : '');
     sw.style.background = `linear-gradient(135deg, ${th.accentA}, ${th.accentB})`;
@@ -620,12 +618,15 @@
 
     sw.addEventListener('click', () => {
       theme = th;
+      currentAnimeFilter = th.filter;
+      vibeNameEl.textContent = th.name;
       document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
       sw.classList.add('active');
       draw();
     });
 
     themeRow.appendChild(sw);
+    return sw;
   });
 
   function showToast(msg) {
@@ -633,6 +634,57 @@
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2200);
   }
+
+  // Automatic Theme & Anime Filter Detection from photo colors
+  function autoDetectVibe(image) {
+    try {
+      const s = 16;
+      const c = document.createElement('canvas'); c.width = s; c.height = s;
+      const cx = c.getContext('2d');
+      cx.drawImage(image, 0, 0, s, s);
+      const data = cx.getImageData(0, 0, s, s).data;
+
+      let r = 0, g = 0, b = 0, count = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        r += data[i]; g += data[i + 1]; b += data[i + 2]; count++;
+      }
+      r /= count; g /= count; b /= count;
+      const brightness = (r + g + b) / 3;
+      const warmth = r - b;
+
+      let selectedIndex = 0;
+      if (b > r && b > g) selectedIndex = 1; // Neon Sakura
+      else if (g > r && g > b) selectedIndex = 2; // Tropical Aqua
+      else if (warmth > 20 && brightness > 120) selectedIndex = 3; // Golden Hour
+      else selectedIndex = 0; // Anime Sunset
+
+      theme = THEMES[selectedIndex];
+      currentAnimeFilter = theme.filter;
+      vibeNameEl.textContent = theme.name;
+
+      swatchEls.forEach((sw, idx) => sw.classList.toggle('active', idx === selectedIndex));
+    } catch(e) { /* fallback */ }
+  }
+
+  // Default fallback avatar
+  function createDefaultAvatar() {
+    const c = document.createElement('canvas');
+    c.width = 400; c.height = 400;
+    const cx = c.getContext('2d');
+    
+    const g = cx.createLinearGradient(0,0,400,400);
+    g.addColorStop(0, '#2d1254'); g.addColorStop(1, '#611d75');
+    cx.fillStyle = g; cx.fillRect(0,0,400,400);
+
+    cx.fillStyle = '#ffb648';
+    cx.beginPath(); cx.arc(200, 150, 65, 0, Math.PI*2); cx.fill();
+    cx.beginPath(); cx.arc(200, 360, 115, 0, Math.PI*2); cx.fill();
+
+    const avatarImg = new Image();
+    avatarImg.onload = () => { img = avatarImg; draw(); };
+    avatarImg.src = c.toDataURL();
+  }
+  createDefaultAvatar();
 
   // Camera Selfie Logic
   cameraBtn.addEventListener('click', async () => {
@@ -667,6 +719,7 @@
     const snappedImage = new Image();
     snappedImage.onload = () => {
       img = snappedImage;
+      autoDetectVibe(snappedImage);
       offsetX = 0.5; offsetY = 0.5;
       zoom.value = 100; posX.value = 0; posY.value = 0; rot.value = 0;
       draw();
@@ -722,6 +775,7 @@
     const image = new Image();
     image.onload = () => {
       img = image;
+      autoDetectVibe(image);
       offsetX = 0.5; offsetY = 0.5;
       zoom.value = 100; posX.value = 0; posY.value = 0; rot.value = 0;
       draw();
@@ -755,11 +809,9 @@
   });
   window.addEventListener('pointerup', () => dragging = false);
 
-  // Dynamic Beach Background Engine
+  // Dynamic Background Engine
   function drawSunsetPalmScene(t) {
     const w = bgCanvas.width, h = bgCanvas.height;
-    
-    // Gradient Sky
     const s = theme.sky;
     const g = bgCtx.createLinearGradient(0, 0, 0, h);
     s.forEach((col, idx) => g.addColorStop(idx / (s.length - 1), col));
@@ -797,7 +849,7 @@
     if (shapeType === 'circle') {
       c.arc(cx, cy, r, 0, Math.PI * 2);
     } else if (shapeType === 'rounded') {
-      c.roundRect(cx - r, cy - r, r * 2, r * 2, 36);
+      c.roundRect(cx - r, cy - r, r * 2, r * 2, 40);
     } else if (shapeType === 'hexagon') {
       for (let i = 0; i < 6; i++) {
         const a = (i * Math.PI / 3) - Math.PI / 6;
@@ -811,19 +863,32 @@
     }
   }
 
+  function getZoomVal() {
+    return Math.max(10, parseInt(zoom ? zoom.value : '100', 10) || 100);
+  }
+
   function drawCoverImage(cx0, cy0, cw, ch, zoomPct, ox, oy, rad) {
+    if (!img || !img.width || !img.height) return;
+
     ctx.save();
+    const safeZoom = Math.max(10, zoomPct || 100);
+    const safeOx = isNaN(ox) ? 0.5 : ox;
+    const safeOy = isNaN(oy) ? 0.5 : oy;
+    const safeRad = isNaN(rad) ? 0 : rad;
+
     ctx.translate(cx0 + cw / 2, cy0 + ch / 2);
-    ctx.rotate((rad * Math.PI) / 180);
+    ctx.rotate((safeRad * Math.PI) / 180);
     ctx.translate(-(cx0 + cw / 2), -(cy0 + ch / 2));
 
-    const scale = Math.max(cw / img.width, ch / img.height) * (zoomPct / 100);
+    const scale = Math.max(cw / img.width, ch / img.height) * (safeZoom / 100);
     const dw = img.width * scale, dh = img.height * scale;
     const maxX = dw - cw, maxY = dh - ch;
-    const dx = cx0 - maxX * ox;
-    const dy = cy0 - maxY * oy;
+    const dx = cx0 - maxX * safeOx;
+    const dy = cy0 - maxY * safeOy;
 
+    ctx.filter = currentAnimeFilter;
     ctx.drawImage(img, dx, dy, dw, dh);
+    ctx.filter = 'none';
     ctx.restore();
   }
 
@@ -839,31 +904,31 @@
     }
   }
 
-  // Format A: PFP Frame
+  // Format A: PFP Frame (Guaranteed Photo Render)
   function drawFormatA() {
     const W = canvas.width, H = canvas.height;
     ctx.clearRect(0, 0, W, H);
 
     const cx = W / 2, cy = H * 0.44, r = W * 0.34;
 
-    if (img) {
+    if (img && img.width && img.height) {
       ctx.save();
       applyClipPath(ctx, cx, cy, r, shape);
       ctx.clip();
-      drawCoverImage(cx - r, cy - r, r * 2, r * 2, parseInt(zoom.value, 10), offsetX, offsetY, rotationDeg);
+      drawCoverImage(cx - r, cy - r, r * 2, r * 2, getZoomVal(), offsetX, offsetY, rotationDeg);
       ctx.restore();
     }
 
     // Outer Glow Ring
     ctx.save();
-    applyClipPath(ctx, cx, cy, r + 5, shape);
-    ctx.lineWidth = 8; ctx.strokeStyle = theme.accentB; ctx.stroke();
+    applyClipPath(ctx, cx, cy, r + 6, shape);
+    ctx.lineWidth = 9; ctx.strokeStyle = theme.accentB; ctx.stroke();
     ctx.restore();
 
     // Ribbon
-    const ribbonW = r * 1.68, ribbonH = 72, ribbonY = cy + r - ribbonH * 0.4;
+    const ribbonW = r * 1.68, ribbonH = 74, ribbonY = cy + r - ribbonH * 0.4;
     ctx.save();
-    ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8;
+    ctx.shadowColor = 'rgba(0,0,0,0.55)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8;
     ctx.roundRect(cx - ribbonW / 2, ribbonY, ribbonW, ribbonH, ribbonH / 2);
     const rg = ctx.createLinearGradient(cx - ribbonW / 2, 0, cx + ribbonW / 2, 0);
     rg.addColorStop(0, theme.accentA); rg.addColorStop(1, theme.accentB);
@@ -895,7 +960,7 @@
     ctx.lineWidth = 2.5; ctx.strokeStyle = theme.accentB; ctx.stroke();
     ctx.restore();
 
-    // Top Header Banner
+    // Header Banner
     ctx.roundRect(cardX + 24, cardY + 24, cardW - 48, 76, 20);
     const hg = ctx.createLinearGradient(cardX, 0, cardX + cardW, 0);
     hg.addColorStop(0, theme.accentA); hg.addColorStop(1, theme.accentB);
@@ -905,11 +970,11 @@
 
     // Avatar
     const pR = 145, pCx = W / 2, pCy = cardY + 250;
-    if (img) {
+    if (img && img.width && img.height) {
       ctx.save();
       applyClipPath(ctx, pCx, pCy, pR, shape);
       ctx.clip();
-      drawCoverImage(pCx - pR, pCy - pR, pR * 2, pR * 2, parseInt(zoom.value, 10), offsetX, offsetY, rotationDeg);
+      drawCoverImage(pCx - pR, pCy - pR, pR * 2, pR * 2, getZoomVal(), offsetX, offsetY, rotationDeg);
       ctx.restore();
     }
     ctx.save();
@@ -944,20 +1009,19 @@
     return out;
   }
 
-  // Download PNG
+  // Actions
   document.getElementById('downloadBtn').addEventListener('click', () => {
     exportCanvas().toBlob(blob => {
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       a.download = `hh-goa-2026-${mode === 'A' ? 'pfp-frame' : 'builder-pass'}.png`;
       a.click();
-      showToast('Downloaded High-Res PNG!');
+      showToast('Downloaded PNG!');
     }, 'image/png', 1);
   });
 
-  // Share to X
   document.getElementById('shareBtn').addEventListener('click', async () => {
-    const caption = `Building at HH Goa 2026! 🌴 Check out my official PFP frame: ${DEPLOYMENT_URL} #FrameInGoa #HHGoa2026`;
+    const caption = `Building at HH Goa 2026! 🌴 Check out my PFP frame: ${DEPLOYMENT_URL} #FrameInGoa #HHGoa2026`;
 
     exportCanvas().toBlob(async blob => {
       const file = new File([blob], 'hh-goa-2026.png', { type: 'image/png' });
@@ -973,15 +1037,14 @@
       a.click();
       const intent = 'https://twitter.com/intent/tweet?text=' + encodeURIComponent(caption);
       setTimeout(() => window.open(intent, '_blank'), 400);
-      showToast('Downloaded graphic — opening X post with deployment link!');
+      showToast('Downloaded graphic — opening X post!');
     }, 'image/png', 1);
   });
 
-  // Copy Link
   document.getElementById('copyLinkBtn').addEventListener('click', () => {
-    const caption = `Building at HH Goa 2026! 🌴 Check out my official PFP frame: ${DEPLOYMENT_URL} #FrameInGoa #HHGoa2026`;
+    const caption = `Building at HH Goa 2026! 🌴 Check out my PFP frame: ${DEPLOYMENT_URL} #FrameInGoa #HHGoa2026`;
     navigator.clipboard.writeText(caption).then(() => {
-      showToast('Copied caption & link to clipboard!');
+      showToast('Copied caption & link!');
     }).catch(() => showToast('Failed to copy'));
   });
 
