@@ -484,27 +484,6 @@
 <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
 <script>
 (function(){
-  // roundRect polyfill — native support is missing on older Safari/iOS (common on phones
-  // at a beach event); without this every ctx.roundRect() call below throws and rendering
-  // breaks silently
-  if (!CanvasRenderingContext2D.prototype.roundRect) {
-    CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
-      if (typeof r === 'number') r = { tl: r, tr: r, br: r, bl: r };
-      this.beginPath();
-      this.moveTo(x + r.tl, y);
-      this.lineTo(x + w - r.tr, y);
-      this.arcTo(x + w, y, x + w, y + r.tr, r.tr);
-      this.lineTo(x + w, y + h - r.br);
-      this.arcTo(x + w, y + h, x + w - r.br, y + h, r.br);
-      this.lineTo(x + r.bl, y + h);
-      this.arcTo(x, y + h, x, y + h - r.bl, r.bl);
-      this.lineTo(x, y + r.tl);
-      this.arcTo(x, y, x + r.tl, y, r.tl);
-      this.closePath();
-      return this;
-    };
-  }
-
   const DEPLOYMENT_URL = "https://hh-goa-2026-frame-omega.vercel.app/";
 
   const canvas = document.getElementById('canvas');
@@ -605,6 +584,51 @@
     setTimeout(() => toast.classList.remove('show'), 2200);
   }
 
+  // Pre-rendered High Quality Demo Builder Avatar Image
+  function createSampleBuilderImage() {
+    const c = document.createElement('canvas');
+    c.width = 600; c.height = 600;
+    const cx = c.getContext('2d');
+
+    const g = cx.createLinearGradient(0, 0, 600, 600);
+    g.addColorStop(0, '#2d0c4e'); g.addColorStop(0.5, '#7a1d5c'); g.addColorStop(1, '#ff6b4a');
+    cx.fillStyle = g; cx.fillRect(0, 0, 600, 600);
+
+    cx.lineWidth = 4; cx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    cx.beginPath(); cx.arc(300, 300, 220, 0, Math.PI * 2); cx.stroke();
+
+    cx.fillStyle = '#ffb648';
+    cx.beginPath(); cx.ellipse(300, 520, 180, 120, 0, 0, Math.PI * 2); cx.fill();
+    cx.fillStyle = '#1a082b';
+    cx.beginPath(); cx.ellipse(300, 530, 140, 90, 0, 0, Math.PI * 2); cx.fill();
+
+    cx.fillStyle = '#fce0c0'; cx.fillRect(260, 340, 80, 80);
+    cx.fillStyle = '#ffe5ca'; cx.beginPath(); cx.ellipse(300, 270, 110, 130, 0, 0, Math.PI * 2); cx.fill();
+
+    cx.fillStyle = '#ff3b6b';
+    cx.beginPath(); cx.arc(300, 220, 120, Math.PI, Math.PI * 2); cx.fill();
+    cx.beginPath(); cx.moveTo(200, 220); cx.lineTo(240, 280); cx.lineTo(260, 230); cx.lineTo(290, 290); cx.lineTo(310, 230); cx.lineTo(350, 285); cx.lineTo(400, 220); cx.fill();
+
+    cx.fillStyle = '#110424'; cx.roundRect(220, 250, 160, 55, 14); cx.fill();
+    cx.lineWidth = 3; cx.strokeStyle = '#00f2fe'; cx.stroke();
+    const lg = cx.createLinearGradient(220, 250, 380, 305);
+    lg.addColorStop(0, 'rgba(0, 242, 254, 0.7)'); lg.addColorStop(0.5, 'rgba(255, 46, 196, 0.7)'); lg.addColorStop(1, 'transparent');
+    cx.fillStyle = lg; cx.roundRect(224, 254, 152, 47, 10); cx.fill();
+
+    cx.lineWidth = 4; cx.strokeStyle = '#853216';
+    cx.beginPath(); cx.arc(300, 335, 20, 0.1, Math.PI - 0.1); cx.stroke();
+
+    const sampleImg = new Image();
+    sampleImg.onload = () => {
+      if (!img) {
+        img = sampleImg;
+        draw();
+      }
+    };
+    sampleImg.src = c.toDataURL();
+  }
+  createSampleBuilderImage();
+
   function autoDetectVibeOnUpload(image) {
     try {
       const s = 16;
@@ -675,7 +699,6 @@
       draw();
       stopCamera();
     };
-    snappedImage.onerror = () => showToast('Could not capture photo');
     snappedImage.src = tmpCanvas.toDataURL('image/jpeg');
   });
 
@@ -714,24 +737,29 @@
   uploadBtn.addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
 
+  // 100% Reliable File Reader Data URL for Mobile & WebViews
   async function handleFile(file) {
+    if (!file) return;
     let blob = file;
     if (/heic|heif/i.test(file.type) || /\.hei[cf]$/i.test(file.name)) {
       showToast('Converting HEIC…');
       try { blob = await heic2any({ blob: file, toType: 'image/jpeg', quality: 0.92 }); }
       catch(err) { showToast('Could not read HEIC — try JPG/PNG'); return; }
     }
-    const url = URL.createObjectURL(blob);
-    const image = new Image();
-    image.onload = () => {
-      img = image;
-      autoDetectVibeOnUpload(image);
-      offsetX = 0.5; offsetY = 0.5;
-      zoom.value = 100; posX.value = 0; posY.value = 0; rot.value = 0;
-      draw();
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const loadedImage = new Image();
+      loadedImage.onload = () => {
+        img = loadedImage;
+        autoDetectVibeOnUpload(loadedImage);
+        offsetX = 0.5; offsetY = 0.5;
+        zoom.value = 100; posX.value = 0; posY.value = 0; rot.value = 0;
+        draw();
+        showToast('Photo Uploaded!');
+      };
+      loadedImage.src = evt.target.result;
     };
-    image.onerror = () => showToast('Could not load that image');
-    image.src = url;
+    reader.readAsDataURL(blob);
   }
 
   zoom.addEventListener('input', draw);
@@ -744,10 +772,6 @@
     return { x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height };
   }
   canvas.addEventListener('pointerdown', e => {
-    if (!img) {
-      fileInput.click();
-      return;
-    }
     dragging = true;
     dragStart = { p: pointerPos(e), ox: offsetX, oy: offsetY };
   });
@@ -769,27 +793,16 @@
     const g = bgCtx.createLinearGradient(0, 0, 0, h);
     s.forEach((col, idx) => g.addColorStop(idx / (s.length - 1), col));
     bgCtx.fillStyle = g; bgCtx.fillRect(0, 0, w, h);
-
-    // Sun — gentle breathing glow so the animation loop actually does something
-    const pulse = 1 + Math.sin(t * 0.8) * 0.06;
+    
+    // Sun
     const sunX = w * 0.76, sunY = h * 0.22;
-    const sg = bgCtx.createRadialGradient(sunX, sunY, 15, sunX, sunY, 160 * pulse);
+    const sg = bgCtx.createRadialGradient(sunX, sunY, 15, sunX, sunY, 160);
     sg.addColorStop(0, theme.orb[0]); sg.addColorStop(0.4, theme.orb[1]); sg.addColorStop(1, 'transparent');
-    bgCtx.fillStyle = sg; bgCtx.beginPath(); bgCtx.arc(sunX, sunY, 160 * pulse, 0, Math.PI * 2); bgCtx.fill();
+    bgCtx.fillStyle = sg; bgCtx.beginPath(); bgCtx.arc(sunX, sunY, 160, 0, Math.PI * 2); bgCtx.fill();
 
-    // Sea, with a soft shimmering highlight that drifts over time
+    // Sea
     const seaY = h * 0.72;
     bgCtx.fillStyle = theme.water[0]; bgCtx.fillRect(0, seaY, w, h - seaY);
-    bgCtx.save();
-    bgCtx.beginPath(); bgCtx.rect(0, seaY, w, h - seaY); bgCtx.clip();
-    for (let i = 0; i < 40; i++) {
-      const sx = (i * 53 + t * 30) % (w + 60) - 30;
-      const sy = seaY + 12 + (i % 6) * 10;
-      const flick = 0.1 + 0.15 * Math.abs(Math.sin(t * 2 + i));
-      bgCtx.fillStyle = `rgba(255,220,170,${flick})`;
-      bgCtx.fillRect(sx, sy, 18, 2);
-    }
-    bgCtx.restore();
 
     // Sand
     const sandY = h * 0.88;
@@ -865,7 +878,7 @@
     }
   }
 
-  // FAIL-SAFE STROKED OUTLINE TEXT RENDERER
+  // 100% RELIABLE OUTLINE TEXT DRAWING
   function drawOutlineText(text, cx, cy, fontStr, fillColor, strokeColor, strokeWidth) {
     ctx.save();
     ctx.font = fontStr;
@@ -891,7 +904,7 @@
 
     const cx = W / 2, cy = H * 0.44, r = W * 0.34;
 
-    // 1. Photo Avatar or Fallback Gradient Avatar
+    // 1. Photo Avatar
     ctx.save();
     applyClipPath(ctx, cx, cy, r, shape);
     ctx.clip();
@@ -903,12 +916,6 @@
       g.addColorStop(0, '#3a1259'); g.addColorStop(1, '#8c2662');
       ctx.fillStyle = g;
       ctx.fillRect(cx - r, cy - r, r * 2, r * 2);
-
-      ctx.fillStyle = '#ffb648';
-      ctx.beginPath(); ctx.arc(cx, cy - 20, r * 0.4, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.arc(cx, cy + r * 0.8, r * 0.7, 0, Math.PI * 2); ctx.fill();
-      
-      drawOutlineText('Tap to Upload Photo', cx, cy + 20, 'bold 26px Arial, sans-serif', '#ffffff', '#000000', 5);
     }
     ctx.restore();
 
