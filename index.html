@@ -16,7 +16,7 @@
     --gold: #ffe082;
     --teal: #00f2fe;
     --deep: #160724;
-    --card: rgba(22, 10, 36, 0.88);
+    --card: rgba(22, 10, 36, 0.9);
     --border: rgba(255, 182, 72, 0.25);
     --ink: #fdf8ff;
     --muted: #bdaece;
@@ -37,7 +37,6 @@
 
   .wrap { max-width: 490px; margin: 0 auto; }
 
-  /* Compact Header */
   header { text-align: center; margin-bottom: 12px; }
 
   .badge {
@@ -763,8 +762,8 @@
     if (!dragging) return;
     const p = pointerPos(e);
     const dx = p.x - dragStart.p.x, dy = p.y - dragStart.p.y;
-    offsetX = Math.min(1, Math.max(0, dragStart.ox - dx));
-    offsetY = Math.min(1, Math.max(0, dragStart.oy - dy));
+    offsetX = Math.min(1, Math.max(0, dragStart.ox + dx * 1.2));
+    offsetY = Math.min(1, Math.max(0, dragStart.oy + dy * 1.2));
     posX.value = Math.round(offsetX * 200 - 100);
     posY.value = Math.round(offsetY * 200 - 100);
     draw();
@@ -785,11 +784,11 @@
     sg.addColorStop(0, theme.orb[0]); sg.addColorStop(0.4, theme.orb[1]); sg.addColorStop(1, 'transparent');
     bgCtx.fillStyle = sg; bgCtx.beginPath(); bgCtx.arc(sunX, sunY, 160, 0, Math.PI * 2); bgCtx.fill();
 
-    // Ocean Waves
+    // Sea
     const seaY = h * 0.72;
     bgCtx.fillStyle = theme.water[0]; bgCtx.fillRect(0, seaY, w, h - seaY);
 
-    // Sand Beach
+    // Sand
     const sandY = h * 0.88;
     const sgSand = bgCtx.createLinearGradient(0, sandY, 0, h);
     sgSand.addColorStop(0, theme.sand[0]); sgSand.addColorStop(1, theme.sand[1]);
@@ -829,7 +828,7 @@
     return Math.max(10, parseInt(zoom ? zoom.value : '100', 10) || 100);
   }
 
-  // Cross-Browser 100% Reliable Photo Rendering
+  // Cross-Browser Guaranteed Photo Rendering with Centering Offset Math
   function drawCoverImage(cx0, cy0, cw, ch, zoomPct, ox, oy, rad) {
     if (!img || !img.width || !img.height) return;
 
@@ -839,15 +838,19 @@
     const safeOy = isNaN(oy) ? 0.5 : oy;
     const safeRad = isNaN(rad) ? 0 : rad;
 
-    ctx.translate(cx0 + cw / 2, cy0 + ch / 2);
-    ctx.rotate((safeRad * Math.PI) / 180);
-    ctx.translate(-(cx0 + cw / 2), -(cy0 + ch / 2));
-
     const scale = Math.max(cw / img.width, ch / img.height) * (safeZoom / 100);
     const dw = img.width * scale, dh = img.height * scale;
-    const maxX = dw - cw, maxY = dh - ch;
-    const dx = cx0 - maxX * safeOx;
-    const dy = cy0 - maxY * safeOy;
+
+    // Calculate center offset with range for horizontal & vertical pan
+    const centerX = cx0 + cw / 2 + (safeOx - 0.5) * cw * 1.4;
+    const centerY = cy0 + ch / 2 + (safeOy - 0.5) * ch * 1.4;
+
+    ctx.translate(centerX, centerY);
+    ctx.rotate((safeRad * Math.PI) / 180);
+    ctx.translate(-centerX, -centerY);
+
+    const dx = centerX - dw / 2;
+    const dy = centerY - dh / 2;
 
     ctx.drawImage(img, dx, dy, dw, dh);
     ctx.restore();
@@ -874,7 +877,7 @@
     }
   }
 
-  // Format A: PFP Frame (Guaranteed Cross-Browser Render)
+  // Format A: PFP Frame (Guaranteed Photo Render)
   function drawFormatA() {
     const W = canvas.width, H = canvas.height;
     ctx.clearRect(0, 0, W, H);
