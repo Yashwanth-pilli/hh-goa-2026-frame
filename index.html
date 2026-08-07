@@ -37,6 +37,7 @@
 
   .wrap { max-width: 490px; margin: 0 auto; }
 
+  /* Compact Header */
   header { text-align: center; margin-bottom: 12px; }
 
   .badge {
@@ -540,32 +541,32 @@
     {
       name: 'Goa Sunset Anime',
       sky: ['#17072b', '#3b1049', '#7e2454', '#c94457', '#ff7d4e', '#ffca7a'],
-      accentA: '#ff5e62', accentB: '#ffb648', inkOnAccent: '#241003',
-      capBg: 'rgba(14, 7, 24, 0.88)', capText: '#ffe8c7',
+      accentA: '#ff5e62', accentB: '#ffb648', inkOnAccent: '#ffffff',
+      capBg: 'rgba(14, 7, 24, 0.92)', capText: '#ffe8c7',
       water: ['rgba(10, 60, 75, 0.95)', '#041c26'], sand: ['#f6ce9d', '#de9f6b'],
       orb: ['#fff7e0', '#ffd175', '#ff8c42']
     },
     {
       name: 'Neon Cyber Vibe',
       sky: ['#06030c', '#120b30', '#2a104f', '#611068', '#a81895', '#ff38ca'],
-      accentA: '#00f2fe', accentB: '#ff2ec4', inkOnAccent: '#060012',
-      capBg: 'rgba(6, 4, 15, 0.88)', capText: '#d8f8ff',
+      accentA: '#00f2fe', accentB: '#ff2ec4', inkOnAccent: '#ffffff',
+      capBg: 'rgba(6, 4, 15, 0.92)', capText: '#d8f8ff',
       water: ['rgba(6, 28, 44, 0.95)', '#01070e'], sand: ['#2d1c44', '#170b28'],
       orb: ['#ffffff', '#d4f3ff', '#8ab0e6']
     },
     {
       name: 'Tropical Ocean Vibe',
       sky: ['#0b3142', '#14596d', '#228fa0', '#4cc5b9', '#96e8ce', '#e3fff4'],
-      accentA: '#ff5e62', accentB: '#ffd166', inkOnAccent: '#1c0f05',
-      capBg: 'rgba(5, 36, 42, 0.88)', capText: '#e3fff6',
+      accentA: '#ff5e62', accentB: '#ffd166', inkOnAccent: '#ffffff',
+      capBg: 'rgba(5, 36, 42, 0.92)', capText: '#e3fff6',
       water: ['rgba(6, 68, 78, 0.92)', '#012128'], sand: ['#ffe2b3', '#ecc07e'],
       orb: ['#ffffff', '#ffebad', '#ffc04d']
     },
     {
       name: 'Golden Beach Vibe',
       sky: ['#241206', '#4a220d', '#964d19', '#d67e27', '#ffb648', '#ffeaab'],
-      accentA: '#ffb648', accentB: '#ff7e33', inkOnAccent: '#261104',
-      capBg: 'rgba(26, 12, 4, 0.88)', capText: '#ffe6b8',
+      accentA: '#ffb648', accentB: '#ff7e33', inkOnAccent: '#ffffff',
+      capBg: 'rgba(26, 12, 4, 0.92)', capText: '#ffe6b8',
       water: ['rgba(12, 65, 60, 0.95)', '#031c1a'], sand: ['#ffd494', '#e59e5c'],
       orb: ['#fffde6', '#ffd675', '#ff8533']
     }
@@ -841,7 +842,6 @@
     const scale = Math.max(cw / img.width, ch / img.height) * (safeZoom / 100);
     const dw = img.width * scale, dh = img.height * scale;
 
-    // Calculate center offset with range for horizontal & vertical pan
     const centerX = cx0 + cw / 2 + (safeOx - 0.5) * cw * 1.4;
     const centerY = cy0 + ch / 2 + (safeOy - 0.5) * ch * 1.4;
 
@@ -877,7 +877,7 @@
     }
   }
 
-  // Format A: PFP Frame (Guaranteed Photo Render)
+  // Format A: PFP Frame (HIGH CONTRAST DISTINCT BRANDING)
   function drawFormatA() {
     const W = canvas.width, H = canvas.height;
     ctx.clearRect(0, 0, W, H);
@@ -892,32 +892,48 @@
       ctx.restore();
     }
 
-    // Outer Glow Ring
+    // Outer Photo Frame Ring (High-Contrast Pearl White + Soft Dark Outline)
     ctx.save();
-    applyClipPath(ctx, cx, cy, r + 6, shape);
-    ctx.lineWidth = 9; ctx.strokeStyle = theme.accentB; ctx.stroke();
+    applyClipPath(ctx, cx, cy, r + 7, shape);
+    ctx.lineWidth = 12; ctx.strokeStyle = 'rgba(0, 0, 0, 0.6)'; ctx.stroke();
+    applyClipPath(ctx, cx, cy, r + 4, shape);
+    ctx.lineWidth = 7; ctx.strokeStyle = '#ffffff'; ctx.stroke();
     ctx.restore();
 
-    // Ribbon
-    const ribbonW = r * 1.68, ribbonH = 74, ribbonY = cy + r - ribbonH * 0.4;
+    // Distinct Branding Ribbon (Dark Backing + Vibrant Sunset Gradient + High Contrast Text)
+    const ribbonW = r * 1.7, ribbonH = 76, ribbonY = cy + r - ribbonH * 0.45;
     ctx.save();
-    ctx.shadowColor = 'rgba(0,0,0,0.55)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8;
+    // Dark outline stroke around ribbon so it NEVER mixes with the photo or ring
+    ctx.shadowColor = 'rgba(0,0,0,0.85)'; ctx.shadowBlur = 28; ctx.shadowOffsetY = 10;
+    ctx.roundRect(cx - ribbonW / 2 - 3, ribbonY - 3, ribbonW + 6, ribbonH + 6, ribbonH / 2 + 2);
+    ctx.fillStyle = '#06020c'; ctx.fill();
+    
     ctx.roundRect(cx - ribbonW / 2, ribbonY, ribbonW, ribbonH, ribbonH / 2);
     const rg = ctx.createLinearGradient(cx - ribbonW / 2, 0, cx + ribbonW / 2, 0);
     rg.addColorStop(0, theme.accentA); rg.addColorStop(1, theme.accentB);
     ctx.fillStyle = rg; ctx.fill();
+    ctx.lineWidth = 3; ctx.strokeStyle = '#ffffff'; ctx.stroke();
     ctx.restore();
 
-    trackedText('HH GOA 2026', cx, ribbonY + ribbonH / 2, '800 36px "Outfit", sans-serif', theme.inkOnAccent, 2);
+    // High Contrast White Text with Shadow
+    ctx.save();
+    ctx.shadowColor = '#000000'; ctx.shadowBlur = 10;
+    trackedText('HH GOA 2026', cx, ribbonY + ribbonH / 2, '900 36px "Outfit", sans-serif', '#ffffff', 2);
+    ctx.restore();
 
-    // Event Stamp Badge
+    // Distinct Event Stamp Badge
     const capY = ribbonY + ribbonH + 48;
     const badgeText = fBadge.value || 'VERIFIED BUILDER';
     ctx.font = '800 20px "Outfit", sans-serif';
     const capW = ctx.measureText(badgeText).width + 54;
+    ctx.save();
+    ctx.roundRect(cx - capW / 2 - 2, capY - 24, capW + 4, 48, 24);
+    ctx.fillStyle = '#000000'; ctx.fill();
     ctx.roundRect(cx - capW / 2, capY - 22, capW, 44, 22);
     ctx.fillStyle = theme.capBg; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = theme.accentA; ctx.stroke();
     trackedText(badgeText, cx, capY + 1, '800 19px "Outfit", sans-serif', theme.capText, 3);
+    ctx.restore();
   }
 
   // Format B: VIP Builder Pass
@@ -927,22 +943,26 @@
 
     const cardX = 60, cardY = 140, cardW = W - 120, cardH = H - 240;
     ctx.save();
-    ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 40;
+    ctx.shadowColor = 'rgba(0,0,0,0.7)'; ctx.shadowBlur = 45;
     ctx.roundRect(cardX, cardY, cardW, cardH, 36);
-    ctx.fillStyle = 'rgba(18, 10, 35, 0.95)'; ctx.fill();
-    ctx.lineWidth = 2.5; ctx.strokeStyle = theme.accentB; ctx.stroke();
+    ctx.fillStyle = 'rgba(16, 8, 32, 0.96)'; ctx.fill();
+    ctx.lineWidth = 3; ctx.strokeStyle = theme.accentB; ctx.stroke();
     ctx.restore();
 
     // Header Banner
-    ctx.roundRect(cardX + 24, cardY + 24, cardW - 48, 76, 20);
+    ctx.save();
+    ctx.roundRect(cardX + 22, cardY + 22, cardW - 44, 80, 22);
     const hg = ctx.createLinearGradient(cardX, 0, cardX + cardW, 0);
     hg.addColorStop(0, theme.accentA); hg.addColorStop(1, theme.accentB);
     ctx.fillStyle = hg; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = '#ffffff'; ctx.stroke();
 
-    trackedText('HACKER HOUSE GOA 2026', W / 2, cardY + 62, '800 28px "Outfit", sans-serif', theme.inkOnAccent, 2);
+    ctx.shadowColor = '#000000'; ctx.shadowBlur = 10;
+    trackedText('HACKER HOUSE GOA 2026', W / 2, cardY + 62, '900 28px "Outfit", sans-serif', '#ffffff', 2);
+    ctx.restore();
 
-    // Avatar
-    const pR = 145, pCx = W / 2, pCy = cardY + 250;
+    // Avatar Photo Ring (Pure White Ring for High Contrast)
+    const pR = 145, pCx = W / 2, pCy = cardY + 255;
     if (img && img.width && img.height) {
       ctx.save();
       applyClipPath(ctx, pCx, pCy, pR, shape);
@@ -951,8 +971,10 @@
       ctx.restore();
     }
     ctx.save();
+    applyClipPath(ctx, pCx, pCy, pR + 5, shape);
+    ctx.lineWidth = 10; ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.stroke();
     applyClipPath(ctx, pCx, pCy, pR + 3, shape);
-    ctx.lineWidth = 5; ctx.strokeStyle = theme.accentB; ctx.stroke();
+    ctx.lineWidth = 6; ctx.strokeStyle = '#ffffff'; ctx.stroke();
     ctx.restore();
 
     // Name & Role
