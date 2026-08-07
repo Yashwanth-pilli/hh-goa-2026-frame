@@ -16,8 +16,8 @@
     --gold: #ffe082;
     --teal: #00f2fe;
     --deep: #160724;
-    --card: rgba(22, 10, 36, 0.9);
-    --border: rgba(255, 182, 72, 0.3);
+    --card: rgba(22, 10, 36, 0.92);
+    --border: rgba(255, 182, 72, 0.35);
     --ink: #fdf8ff;
     --muted: #bdaece;
     --ease: cubic-bezier(.22, 1, .36, 1);
@@ -37,7 +37,6 @@
 
   .wrap { max-width: 490px; margin: 0 auto; }
 
-  /* Header */
   header { text-align: center; margin-bottom: 12px; }
 
   .badge {
@@ -69,11 +68,10 @@
 
   header p { color: var(--muted); font-size: 13px; margin: 0; }
 
-  /* Tabs */
   .tabs {
     display: flex;
     gap: 4px;
-    background: rgba(0, 0, 0, 0.35);
+    background: rgba(0, 0, 0, 0.4);
     padding: 4px;
     border-radius: 14px;
     border: 1px solid var(--border);
@@ -101,7 +99,6 @@
     box-shadow: 0 4px 14px rgba(255, 182, 72, 0.4);
   }
 
-  /* Controls Box ABOVE Canvas */
   .controls-box {
     background: var(--card);
     border: 1px solid var(--border);
@@ -112,7 +109,6 @@
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
   }
 
-  /* Upload & Camera Buttons */
   .action-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -123,8 +119,8 @@
   .btn-upload, .btn-camera {
     padding: 11px 8px;
     border-radius: 12px;
-    border: 1px dashed rgba(255, 182, 72, 0.5);
-    background: rgba(255, 182, 72, 0.1);
+    border: 1px dashed rgba(255, 182, 72, 0.6);
+    background: rgba(255, 182, 72, 0.12);
     color: var(--ink);
     font-family: 'Outfit', sans-serif;
     font-weight: 800;
@@ -139,12 +135,11 @@
 
   .btn-upload:hover, .btn-camera:hover {
     border-color: var(--amber);
-    background: rgba(255, 182, 72, 0.22);
+    background: rgba(255, 182, 72, 0.25);
     color: var(--amber);
   }
   input[type=file] { display: none; }
 
-  /* Options Row */
   .opt-row {
     display: flex;
     gap: 6px;
@@ -198,7 +193,6 @@
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
   }
 
-  /* Sliders Grid ABOVE Canvas */
   .sliders-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -213,7 +207,6 @@
   .slider-item label { font-size: 10.5px; color: var(--muted); font-weight: 700; }
   .slider-item input[type=range] { width: 100%; accent-color: var(--amber); }
 
-  /* Mode B Inputs */
   .mode-b-fields {
     display: none;
     grid-template-columns: 1fr 1fr;
@@ -232,7 +225,6 @@
     outline: none;
   }
 
-  /* Vibe Tag */
   .vibe-tag {
     display: none;
     text-align: center;
@@ -246,7 +238,6 @@
     margin-bottom: 8px;
   }
 
-  /* Canvas Display Card */
   .canvas-card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -279,7 +270,6 @@
   #canvas { z-index: 2; background: transparent; touch-action: none; cursor: grab; }
   #canvas:active { cursor: grabbing; }
 
-  /* Action Buttons */
   .btn-row {
     display: flex;
     gap: 8px;
@@ -323,7 +313,6 @@
     border: 1px solid var(--border);
   }
 
-  /* Selfie Modal */
   .modal {
     position: fixed;
     inset: 0;
@@ -405,7 +394,6 @@
     <div class="tab" data-mode="B">VIP Builder Pass</div>
   </div>
 
-  <!-- Controls Box ABOVE Image -->
   <div class="controls-box">
     <div class="action-grid">
       <button class="btn-upload" id="uploadBtn">📁 Upload Photo</button>
@@ -423,7 +411,6 @@
       <div class="theme-swatches" id="themeRow"></div>
     </div>
 
-    <!-- Sliders Grid ABOVE Canvas -->
     <div class="sliders-grid">
       <div class="slider-item">
         <label>🔍 Zoom</label>
@@ -457,7 +444,6 @@
 
   <div class="vibe-tag" id="vibeTag">✨ Auto Vibe Detected: <span id="vibeName">Goa Sunset Anime</span></div>
 
-  <!-- Canvas Image Card -->
   <div class="canvas-card">
     <div class="canvas-wrap" id="canvasWrap">
       <canvas id="bgCanvas" width="1080" height="1080"></canvas>
@@ -477,7 +463,6 @@
   </footer>
 </div>
 
-<!-- Selfie Camera Modal -->
 <div class="modal" id="camModal">
   <div class="modal-card">
     <div style="font-family:'Outfit',sans-serif;font-weight:800;font-size:16px;">📸 Take Your Selfie</div>
@@ -542,7 +527,7 @@
       name: 'Goa Sunset Anime',
       sky: ['#17072b', '#3b1049', '#7e2454', '#c94457', '#ff7d4e', '#ffca7a'],
       accentA: '#ff5e62', accentB: '#ffb648', inkOnAccent: '#ffffff',
-      capBg: 'rgba(14, 7, 24, 0.92)', capText: '#ffe8c7',
+      capBg: 'rgba(14, 7, 24, 0.95)', capText: '#ffe8c7',
       water: ['rgba(10, 60, 75, 0.95)', '#041c26'], sand: ['#f6ce9d', '#de9f6b'],
       orb: ['#fff7e0', '#ffd175', '#ff8c42']
     },
@@ -550,7 +535,7 @@
       name: 'Neon Cyber Vibe',
       sky: ['#06030c', '#120b30', '#2a104f', '#611068', '#a81895', '#ff38ca'],
       accentA: '#00f2fe', accentB: '#ff2ec4', inkOnAccent: '#ffffff',
-      capBg: 'rgba(6, 4, 15, 0.92)', capText: '#d8f8ff',
+      capBg: 'rgba(6, 4, 15, 0.95)', capText: '#d8f8ff',
       water: ['rgba(6, 28, 44, 0.95)', '#01070e'], sand: ['#2d1c44', '#170b28'],
       orb: ['#ffffff', '#d4f3ff', '#8ab0e6']
     },
@@ -558,7 +543,7 @@
       name: 'Tropical Ocean Vibe',
       sky: ['#0b3142', '#14596d', '#228fa0', '#4cc5b9', '#96e8ce', '#e3fff4'],
       accentA: '#ff5e62', accentB: '#ffd166', inkOnAccent: '#ffffff',
-      capBg: 'rgba(5, 36, 42, 0.92)', capText: '#e3fff6',
+      capBg: 'rgba(5, 36, 42, 0.95)', capText: '#e3fff6',
       water: ['rgba(6, 68, 78, 0.92)', '#012128'], sand: ['#ffe2b3', '#ecc07e'],
       orb: ['#ffffff', '#ffebad', '#ffc04d']
     },
@@ -566,7 +551,7 @@
       name: 'Golden Beach Vibe',
       sky: ['#241206', '#4a220d', '#964d19', '#d67e27', '#ffb648', '#ffeaab'],
       accentA: '#ffb648', accentB: '#ff7e33', inkOnAccent: '#ffffff',
-      capBg: 'rgba(26, 12, 4, 0.92)', capText: '#ffe6b8',
+      capBg: 'rgba(26, 12, 4, 0.95)', capText: '#ffe6b8',
       water: ['rgba(12, 65, 60, 0.95)', '#031c1a'], sand: ['#ffd494', '#e59e5c'],
       orb: ['#fffde6', '#ffd675', '#ff8533']
     }
@@ -596,7 +581,6 @@
     setTimeout(() => toast.classList.remove('show'), 2200);
   }
 
-  // Auto Vibe Triggered ONLY AFTER Photo Upload
   function autoDetectVibeOnUpload(image) {
     try {
       const s = 16;
@@ -670,7 +654,6 @@
     snappedImage.src = tmpCanvas.toDataURL('image/jpeg');
   });
 
-  // Canvas Mode Dimensions
   function setDims() {
     const h = mode === 'A' ? 1080 : 1350;
     canvas.height = h; bgCanvas.height = h;
@@ -735,7 +718,10 @@
     return { x: (e.clientX - r.left) / r.width, y: (e.clientY - r.top) / r.height };
   }
   canvas.addEventListener('pointerdown', e => {
-    if (!img) return;
+    if (!img) {
+      fileInput.click();
+      return;
+    }
     dragging = true;
     dragStart = { p: pointerPos(e), ox: offsetX, oy: offsetY };
   });
@@ -751,7 +737,6 @@
   });
   window.addEventListener('pointerup', () => dragging = false);
 
-  // Dynamic Goa Sunset Animated Background
   function drawSunsetPalmScene(t) {
     const w = bgCanvas.width, h = bgCanvas.height;
     const s = theme.sky;
@@ -785,7 +770,6 @@
   }
   requestAnimationFrame(animFrame);
 
-  // Clip Paths
   function applyClipPath(c, cx, cy, r, shapeType) {
     c.beginPath();
     if (shapeType === 'circle') {
@@ -809,7 +793,6 @@
     return Math.max(10, parseInt(zoom ? zoom.value : '100', 10) || 100);
   }
 
-  // Cross-Browser Guaranteed Photo Rendering with Centering Offset Math
   function drawCoverImage(cx0, cy0, cw, ch, zoomPct, ox, oy, rad) {
     if (!img || !img.width || !img.height) return;
 
@@ -845,7 +828,26 @@
     }
   }
 
-  // Format A: PFP Frame (FAIL-SAFE HIGH-CONTRAST BRANDING & INITIAL PLACEHOLDER)
+  // FAIL-SAFE STROKED OUTLINE TEXT RENDERER
+  function drawOutlineText(text, cx, cy, fontStr, fillColor, strokeColor, strokeWidth) {
+    ctx.save();
+    ctx.font = fontStr;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    if (strokeColor && strokeWidth) {
+      ctx.lineWidth = strokeWidth;
+      ctx.strokeStyle = strokeColor;
+      ctx.lineJoin = 'round';
+      ctx.strokeText(text, cx, cy);
+    }
+
+    ctx.fillStyle = fillColor;
+    ctx.fillText(text, cx, cy);
+    ctx.restore();
+  }
+
+  // Format A: PFP Frame
   function drawFormatA() {
     const W = canvas.width, H = canvas.height;
     ctx.clearRect(0, 0, W, H);
@@ -869,10 +871,7 @@
       ctx.beginPath(); ctx.arc(cx, cy - 20, r * 0.4, 0, Math.PI * 2); ctx.fill();
       ctx.beginPath(); ctx.arc(cx, cy + r * 0.8, r * 0.7, 0, Math.PI * 2); ctx.fill();
       
-      ctx.fillStyle = '#ffffff';
-      ctx.font = '700 24px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('Tap Upload Photo', cx, cy + 20);
+      drawOutlineText('Tap to Upload Photo', cx, cy + 20, 'bold 26px Arial, sans-serif', '#ffffff', '#000000', 5);
     }
     ctx.restore();
 
@@ -886,44 +885,36 @@
     ctx.lineWidth = 4; ctx.strokeStyle = theme.accentB || '#ffb648'; ctx.stroke();
     ctx.restore();
 
-    // 3. Vibrant Branding Ribbon (HH GOA 2026 - Standard Center Text)
-    const ribbonW = r * 1.68, ribbonH = 74, ribbonY = cy + r - ribbonH * 0.45;
+    // 3. Vibrant Branding Ribbon (HH GOA 2026)
+    const ribbonW = r * 1.68, ribbonH = 76, ribbonY = cy + r - ribbonH * 0.45;
     ctx.save();
     ctx.shadowColor = 'rgba(0,0,0,0.65)'; ctx.shadowBlur = 26; ctx.shadowOffsetY = 8;
     
-    // Ribbon body background
+    // Ribbon background gradient
     ctx.roundRect(cx - ribbonW / 2, ribbonY, ribbonW, ribbonH, ribbonH / 2);
     const rg = ctx.createLinearGradient(cx - ribbonW / 2, 0, cx + ribbonW / 2, 0);
     rg.addColorStop(0, theme.accentA || '#ff5e62');
     rg.addColorStop(1, theme.accentB || '#ffb648');
     ctx.fillStyle = rg; ctx.fill();
-    ctx.lineWidth = 2.5; ctx.strokeStyle = '#ffffff'; ctx.stroke();
-
-    // Ribbon Text "HH GOA 2026"
-    ctx.shadowColor = 'rgba(0,0,0,0.85)'; ctx.shadowBlur = 8;
-    ctx.font = '900 36px sans-serif';
-    ctx.fillStyle = '#ffffff';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('HH GOA 2026', cx, ribbonY + ribbonH / 2 + 2);
+    ctx.lineWidth = 3; ctx.strokeStyle = '#ffffff'; ctx.stroke();
     ctx.restore();
+
+    // Bold Stroked Outline Text "HH GOA 2026"
+    drawOutlineText('HH GOA 2026', cx, ribbonY + ribbonH / 2, 'bold 36px Arial, sans-serif', '#ffffff', '#000000', 8);
 
     // 4. Event Stamp Badge ("VERIFIED BUILDER")
     const capY = ribbonY + ribbonH + 46;
     const badgeText = fBadge.value || 'VERIFIED BUILDER';
     ctx.save();
-    ctx.font = '800 18px sans-serif';
+    ctx.font = 'bold 18px Arial, sans-serif';
     const capW = ctx.measureText(badgeText).width + 48;
     ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 14;
     ctx.roundRect(cx - capW / 2, capY - 20, capW, 40, 20);
     ctx.fillStyle = theme.capBg || '#100720'; ctx.fill();
     ctx.lineWidth = 2; ctx.strokeStyle = theme.accentB || '#ffb648'; ctx.stroke();
-
-    ctx.fillStyle = theme.capText || '#ffe6c2';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(badgeText, cx, capY + 1);
     ctx.restore();
+
+    drawOutlineText(badgeText, cx, capY + 1, 'bold 18px Arial, sans-serif', theme.capText || '#ffe6c2', '#000000', 4);
   }
 
   // Format B: VIP Builder Pass
@@ -946,11 +937,9 @@
     hg.addColorStop(0, theme.accentA); hg.addColorStop(1, theme.accentB);
     ctx.fillStyle = hg; ctx.fill();
     ctx.lineWidth = 2; ctx.strokeStyle = '#ffffff'; ctx.stroke();
-
-    ctx.shadowColor = '#000000'; ctx.shadowBlur = 10;
-    ctx.font = '900 28px sans-serif'; ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText('HACKER HOUSE GOA 2026', W / 2, cardY + 62);
     ctx.restore();
+
+    drawOutlineText('HACKER HOUSE GOA 2026', W / 2, cardY + 62, 'bold 28px Arial, sans-serif', '#ffffff', '#000000', 6);
 
     // Avatar
     const pR = 145, pCx = W / 2, pCy = cardY + 255;
@@ -977,16 +966,13 @@
 
     // Name & Role
     const name = (fName.value || 'YOUR NAME').toUpperCase();
-    ctx.font = '900 40px sans-serif'; ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center';
-    ctx.fillText(name, W / 2, pCy + pR + 70);
+    drawOutlineText(name, W / 2, pCy + pR + 70, 'bold 38px Arial, sans-serif', '#ffffff', '#000000', 6);
 
     const role = (fRole.value || 'FULLSTACK BUILDER').toUpperCase();
-    ctx.font = '800 22px sans-serif'; ctx.fillStyle = theme.accentB; ctx.textAlign = 'center';
-    ctx.fillText(role, W / 2, pCy + pR + 118);
+    drawOutlineText(role, W / 2, pCy + pR + 118, 'bold 22px Arial, sans-serif', theme.accentB, '#000000', 4);
 
     // Serial
-    ctx.font = '700 16px monospace'; ctx.fillStyle = 'rgba(255,255,255,0.6)';
-    ctx.fillText('PASS ID: HH-GOA-2026-8492', W / 2, cardY + cardH - 45);
+    drawOutlineText('PASS ID: HH-GOA-2026-8492', W / 2, cardY + cardH - 45, 'bold 16px monospace', 'rgba(255,255,255,0.85)', '#000000', 3);
   }
 
   function draw() {
@@ -1003,7 +989,6 @@
     return out;
   }
 
-  // Actions
   document.getElementById('downloadBtn').addEventListener('click', () => {
     exportCanvas().toBlob(blob => {
       const a = document.createElement('a');
