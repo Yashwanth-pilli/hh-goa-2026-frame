@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<title>HH Goa 2026 — Frame &amp; Pass Studio</title>
+<title>HH Goa 2026 — Official Frame &amp; Pass Studio</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,12 +13,13 @@
   :root {
     --amber: #ffb648;
     --coral: #ff5e62;
-    --pink: #ff2ec4;
-    --deep: #090412;
-    --card: rgba(18, 10, 32, 0.9);
-    --border: rgba(255, 255, 255, 0.15);
-    --ink: #f8f4ff;
-    --muted: #a494c4;
+    --gold: #ffe082;
+    --teal: #00f2fe;
+    --deep: #160724;
+    --card: rgba(22, 10, 36, 0.88);
+    --border: rgba(255, 182, 72, 0.25);
+    --ink: #fdf8ff;
+    --muted: #bdaece;
     --ease: cubic-bezier(.22, 1, .36, 1);
   }
 
@@ -28,49 +29,56 @@
   body {
     min-height: 100vh;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    background: radial-gradient(circle at 50% 0%, #260e45 0%, #0a0414 70%, #040208 100%);
+    background: linear-gradient(165deg, #12061e 0%, #2b0c3f 35%, #611e4f 70%, #d6544a 100%);
     color: var(--ink);
     padding: 12px 10px 40px;
+    overflow-x: hidden;
   }
 
-  .wrap { max-width: 480px; margin: 0 auto; }
+  .wrap { max-width: 490px; margin: 0 auto; }
 
   /* Compact Header */
-  header { text-align: center; margin-bottom: 10px; }
+  header { text-align: center; margin-bottom: 12px; }
 
   .badge {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-family: 'Outfit', sans-serif;
     font-size: 11px;
     letter-spacing: 0.12em;
     font-weight: 800;
     color: #1a0a02;
-    background: linear-gradient(135deg, var(--amber), #ffe082);
-    padding: 4px 12px;
+    background: linear-gradient(135deg, var(--amber), var(--gold));
+    padding: 4px 14px;
     border-radius: 999px;
-    box-shadow: 0 0 16px rgba(255, 182, 72, 0.35);
+    box-shadow: 0 0 16px rgba(255, 182, 72, 0.4);
+    margin-bottom: 6px;
   }
 
   h1 {
     font-family: 'Outfit', sans-serif;
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 900;
-    margin: 4px 0 0;
+    margin: 0 0 2px;
     letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #ffffff 30%, var(--amber) 70%, var(--pink) 100%);
+    background: linear-gradient(135deg, #ffffff 30%, var(--amber) 70%, #ff8c52 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
-  /* Compact Mode Tabs */
+  header p { color: var(--muted); font-size: 13px; margin: 0; }
+
+  /* Tabs Switcher */
   .tabs {
     display: flex;
     gap: 4px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.3);
     padding: 4px;
     border-radius: 14px;
     border: 1px solid var(--border);
     margin-bottom: 12px;
+    backdrop-filter: blur(12px);
   }
 
   .tab {
@@ -88,20 +96,20 @@
   }
 
   .tab.active {
-    background: linear-gradient(135deg, var(--amber), #ffd466);
+    background: linear-gradient(135deg, var(--amber), var(--gold));
     color: #1c0c02;
-    box-shadow: 0 4px 14px rgba(255, 182, 72, 0.3);
+    box-shadow: 0 4px 14px rgba(255, 182, 72, 0.4);
   }
 
-  /* Controls Box (Placed ABOVE Canvas) */
+  /* Controls Box ABOVE Canvas */
   .controls-box {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 20px;
     padding: 14px;
     margin-bottom: 12px;
-    backdrop-filter: blur(14px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
   }
 
   /* Upload & Camera Buttons */
@@ -115,8 +123,8 @@
   .btn-upload, .btn-camera {
     padding: 11px 8px;
     border-radius: 12px;
-    border: 1px dashed rgba(255, 255, 255, 0.25);
-    background: rgba(255, 255, 255, 0.05);
+    border: 1px dashed rgba(255, 182, 72, 0.4);
+    background: rgba(255, 182, 72, 0.08);
     color: var(--ink);
     font-family: 'Outfit', sans-serif;
     font-weight: 800;
@@ -131,12 +139,12 @@
 
   .btn-upload:hover, .btn-camera:hover {
     border-color: var(--amber);
-    background: rgba(255, 182, 72, 0.12);
+    background: rgba(255, 182, 72, 0.2);
     color: var(--amber);
   }
   input[type=file] { display: none; }
 
-  /* Compact Options Grid */
+  /* Options Row */
   .opt-row {
     display: flex;
     gap: 6px;
@@ -156,7 +164,7 @@
     padding: 6px 2px;
     border-radius: 8px;
     border: 1px solid var(--border);
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(255, 255, 255, 0.05);
     color: var(--muted);
     font-size: 11.5px;
     font-weight: 700;
@@ -165,7 +173,7 @@
   }
 
   .shape-btn.active {
-    background: rgba(255, 182, 72, 0.2);
+    background: rgba(255, 182, 72, 0.25);
     border-color: var(--amber);
     color: var(--amber);
   }
@@ -187,15 +195,15 @@
   .swatch.active {
     border-color: #ffffff;
     transform: scale(1.15);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
   }
 
-  /* Sliders Grid (Above Canvas) */
+  /* Sliders Grid ABOVE Canvas */
   .sliders-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
-    background: rgba(0, 0, 0, 0.25);
+    background: rgba(0, 0, 0, 0.3);
     padding: 8px 10px;
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.08);
@@ -205,7 +213,7 @@
   .slider-item label { font-size: 10.5px; color: var(--muted); font-weight: 700; }
   .slider-item input[type=range] { width: 100%; accent-color: var(--amber); }
 
-  /* Mode B Extra Inputs */
+  /* Mode B Inputs */
   .mode-b-fields {
     display: none;
     grid-template-columns: 1fr 1fr;
@@ -218,27 +226,27 @@
     padding: 8px 10px;
     border-radius: 10px;
     border: 1px solid var(--border);
-    background: #0f071f;
+    background: #11071c;
     color: var(--ink);
     font-size: 12.5px;
     outline: none;
   }
 
-  /* Vibe Alert Bar */
+  /* Vibe Alert Tag */
   .vibe-tag {
     display: none;
     text-align: center;
     font-size: 11.5px;
     font-weight: 800;
-    color: #ffb8f3;
-    background: rgba(255, 46, 196, 0.15);
-    border: 1px solid rgba(255, 46, 196, 0.3);
+    color: #ffe0a3;
+    background: rgba(255, 182, 72, 0.18);
+    border: 1px solid rgba(255, 182, 72, 0.4);
     padding: 4px 10px;
     border-radius: 999px;
     margin-bottom: 8px;
   }
 
-  /* Canvas Card Display */
+  /* Canvas Image Card */
   .canvas-card {
     background: var(--card);
     border: 1px solid var(--border);
@@ -254,8 +262,8 @@
     margin: 0 auto;
     border-radius: 16px;
     overflow: hidden;
-    background: #06020c;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    background: #080312;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.85);
     aspect-ratio: 1 / 1;
   }
 
@@ -271,7 +279,7 @@
   #canvas { z-index: 2; background: transparent; touch-action: none; cursor: grab; }
   #canvas:active { cursor: grabbing; }
 
-  /* Export Action Buttons */
+  /* Action Buttons */
   .btn-row {
     display: flex;
     gap: 8px;
@@ -298,7 +306,7 @@
   button.main-btn:active { transform: scale(0.96); }
 
   .btn-dl {
-    background: linear-gradient(135deg, var(--amber), #ffe082);
+    background: linear-gradient(135deg, var(--amber), var(--gold));
     color: #1e0d02;
     box-shadow: 0 4px 14px rgba(255, 182, 72, 0.35);
   }
@@ -315,7 +323,7 @@
     border: 1px solid var(--border);
   }
 
-  /* Modal */
+  /* Selfie Modal */
   .modal {
     position: fixed;
     inset: 0;
@@ -331,7 +339,7 @@
   .modal.show { display: flex; }
 
   .modal-card {
-    background: #140b26;
+    background: #180a2b;
     border: 1px solid var(--border);
     border-radius: 20px;
     padding: 16px;
@@ -389,6 +397,7 @@
   <header>
     <div class="badge">🌴 HH GOA 2026</div>
     <h1>HH Goa Frame Studio</h1>
+    <p>Upload a photo or selfie → customize frame → share to X.</p>
   </header>
 
   <div class="tabs">
@@ -446,7 +455,7 @@
     </div>
   </div>
 
-  <div class="vibe-tag" id="vibeTag">✨ Auto Vibe: <span id="vibeName">Anime Sunset</span></div>
+  <div class="vibe-tag" id="vibeTag">✨ Auto Vibe Detected: <span id="vibeName">Goa Sunset Anime</span></div>
 
   <!-- Canvas Image Card -->
   <div class="canvas-card">
@@ -526,44 +535,40 @@
   let offsetX = 0.5, offsetY = 0.5, rotationDeg = 0;
   let dragging = false, dragStart = null;
   let mediaStream = null;
-  let currentAnimeFilter = 'saturate(1.35) contrast(1.1) brightness(1.04)';
+  let isAnimeOverlay = false;
 
   const THEMES = [
     {
-      name: 'Anime Sunset Vibe',
-      sky: ['#140826', '#321045', '#7a2552', '#c44558', '#ff7b4e', '#ffc978'],
+      name: 'Goa Sunset Anime',
+      sky: ['#17072b', '#3b1049', '#7e2454', '#c94457', '#ff7d4e', '#ffca7a'],
       accentA: '#ff5e62', accentB: '#ffb648', inkOnAccent: '#241003',
-      capBg: 'rgba(12, 7, 22, 0.88)', capText: '#ffe6c2',
+      capBg: 'rgba(14, 7, 24, 0.88)', capText: '#ffe8c7',
       water: ['rgba(10, 60, 75, 0.95)', '#041c26'], sand: ['#f6ce9d', '#de9f6b'],
-      orb: ['#fff7e0', '#ffd175', '#ff8c42'],
-      filter: 'saturate(1.35) contrast(1.1) brightness(1.05)'
+      orb: ['#fff7e0', '#ffd175', '#ff8c42']
     },
     {
-      name: 'Neon Sakura Vibe',
+      name: 'Neon Cyber Vibe',
       sky: ['#06030c', '#120b30', '#2a104f', '#611068', '#a81895', '#ff38ca'],
       accentA: '#00f2fe', accentB: '#ff2ec4', inkOnAccent: '#060012',
       capBg: 'rgba(6, 4, 15, 0.88)', capText: '#d8f8ff',
       water: ['rgba(6, 28, 44, 0.95)', '#01070e'], sand: ['#2d1c44', '#170b28'],
-      orb: ['#ffffff', '#d4f3ff', '#8ab0e6'],
-      filter: 'hue-rotate(320deg) saturate(1.4) contrast(1.15)'
+      orb: ['#ffffff', '#d4f3ff', '#8ab0e6']
     },
     {
-      name: 'Tropical Aqua Vibe',
-      sky: ['#0b3142', '#1a6b82', '#2a9db0', '#5fd0c7', '#a8ecd6', '#e8fff2'],
+      name: 'Tropical Ocean Vibe',
+      sky: ['#0b3142', '#14596d', '#228fa0', '#4cc5b9', '#96e8ce', '#e3fff4'],
       accentA: '#ff5e62', accentB: '#ffd166', inkOnAccent: '#1c0f05',
       capBg: 'rgba(5, 36, 42, 0.88)', capText: '#e3fff6',
       water: ['rgba(6, 68, 78, 0.92)', '#012128'], sand: ['#ffe2b3', '#ecc07e'],
-      orb: ['#ffffff', '#ffebad', '#ffc04d'],
-      filter: 'saturate(1.3) contrast(1.08) hue-rotate(10deg)'
+      orb: ['#ffffff', '#ffebad', '#ffc04d']
     },
     {
-      name: 'Golden Hour Vibe',
+      name: 'Golden Beach Vibe',
       sky: ['#241206', '#4a220d', '#964d19', '#d67e27', '#ffb648', '#ffeaab'],
       accentA: '#ffb648', accentB: '#ff7e33', inkOnAccent: '#261104',
       capBg: 'rgba(26, 12, 4, 0.88)', capText: '#ffe6b8',
       water: ['rgba(12, 65, 60, 0.95)', '#031c1a'], sand: ['#ffd494', '#e59e5c'],
-      orb: ['#fffde6', '#ffd675', '#ff8533'],
-      filter: 'sepia(0.2) saturate(1.35) contrast(1.1)'
+      orb: ['#fffde6', '#ffd675', '#ff8533']
     }
   ];
   let theme = THEMES[0];
@@ -576,7 +581,6 @@
 
     sw.addEventListener('click', () => {
       theme = th;
-      currentAnimeFilter = th.filter;
       document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
       sw.classList.add('active');
       draw();
@@ -592,7 +596,7 @@
     setTimeout(() => toast.classList.remove('show'), 2200);
   }
 
-  // Automatic Theme & Anime Filter Detection Triggered ONLY AFTER Photo Upload
+  // Auto Vibe Triggered ONLY AFTER Photo Upload
   function autoDetectVibeOnUpload(image) {
     try {
       const s = 16;
@@ -610,13 +614,13 @@
       const warmth = r - b;
 
       let selectedIndex = 0;
-      if (b > r && b > g) selectedIndex = 1; // Neon Sakura
-      else if (g > r && g > b) selectedIndex = 2; // Tropical Aqua
-      else if (warmth > 20 && brightness > 120) selectedIndex = 3; // Golden Hour
-      else selectedIndex = 0; // Anime Sunset
+      if (b > r && b > g) selectedIndex = 1;
+      else if (g > r && g > b) selectedIndex = 2;
+      else if (warmth > 20 && brightness > 120) selectedIndex = 3;
+      else selectedIndex = 0;
 
       theme = THEMES[selectedIndex];
-      currentAnimeFilter = theme.filter;
+      isAnimeOverlay = true;
       vibeName.textContent = theme.name;
       vibeTag.style.display = 'block';
 
@@ -624,14 +628,14 @@
     } catch(e) { /* fallback */ }
   }
 
-  // Default Avatar Placeholder
+  // Fallback Placeholder Avatar
   function createDefaultAvatar() {
     const c = document.createElement('canvas');
     c.width = 400; c.height = 400;
     const cx = c.getContext('2d');
     
     const g = cx.createLinearGradient(0,0,400,400);
-    g.addColorStop(0, '#2d1254'); g.addColorStop(1, '#611d75');
+    g.addColorStop(0, '#2d1254'); g.addColorStop(1, '#7e2454');
     cx.fillStyle = g; cx.fillRect(0,0,400,400);
 
     cx.fillStyle = '#ffb648';
@@ -767,7 +771,7 @@
   });
   window.addEventListener('pointerup', () => dragging = false);
 
-  // Background Animation Engine
+  // Dynamic Goa Sunset Animated Background
   function drawSunsetPalmScene(t) {
     const w = bgCanvas.width, h = bgCanvas.height;
     const s = theme.sky;
@@ -781,11 +785,11 @@
     sg.addColorStop(0, theme.orb[0]); sg.addColorStop(0.4, theme.orb[1]); sg.addColorStop(1, 'transparent');
     bgCtx.fillStyle = sg; bgCtx.beginPath(); bgCtx.arc(sunX, sunY, 160, 0, Math.PI * 2); bgCtx.fill();
 
-    // Sea
+    // Ocean Waves
     const seaY = h * 0.72;
     bgCtx.fillStyle = theme.water[0]; bgCtx.fillRect(0, seaY, w, h - seaY);
 
-    // Sand
+    // Sand Beach
     const sandY = h * 0.88;
     const sgSand = bgCtx.createLinearGradient(0, sandY, 0, h);
     sgSand.addColorStop(0, theme.sand[0]); sgSand.addColorStop(1, theme.sand[1]);
@@ -825,6 +829,7 @@
     return Math.max(10, parseInt(zoom ? zoom.value : '100', 10) || 100);
   }
 
+  // Cross-Browser 100% Reliable Photo Rendering
   function drawCoverImage(cx0, cy0, cw, ch, zoomPct, ox, oy, rad) {
     if (!img || !img.width || !img.height) return;
 
@@ -844,10 +849,17 @@
     const dx = cx0 - maxX * safeOx;
     const dy = cy0 - maxY * safeOy;
 
-    ctx.filter = currentAnimeFilter;
     ctx.drawImage(img, dx, dy, dw, dh);
-    ctx.filter = 'none';
     ctx.restore();
+
+    if (isAnimeOverlay) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'overlay';
+      ctx.fillStyle = theme.accentA || '#ff5e62';
+      ctx.globalAlpha = 0.12;
+      ctx.fillRect(cx0, cy0, cw, ch);
+      ctx.restore();
+    }
   }
 
   function trackedText(text, cx, cy, font, color, spacing) {
@@ -862,7 +874,7 @@
     }
   }
 
-  // Format A: PFP Frame (Guaranteed Photo Render)
+  // Format A: PFP Frame (Guaranteed Cross-Browser Render)
   function drawFormatA() {
     const W = canvas.width, H = canvas.height;
     ctx.clearRect(0, 0, W, H);
