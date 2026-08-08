@@ -1187,9 +1187,11 @@
     ctx.lineTo(carX + bodyW * 0.86, carY + bodyH * 0.1);
     ctx.stroke();
 
-    // Roll bar — brushed-metal gradient tube (open-top arch, no roof)
+    // Roll bar — brushed-metal gradient tube (open-top arch, no roof).
+    // Taller than a real 4x4's bar on purpose: it's what buys headroom for
+    // a big, clearly-visible driver photo instead of a small one low down.
     const barX0 = carX + bodyW * 0.2, barX1 = carX + bodyW * 0.82;
-    const barTopY = carY - bodyH * 0.78;
+    const barTopY = carY - bodyH * 1.05;
     ctx.save();
     const barG = ctx.createLinearGradient(barX0, 0, barX1, 0);
     barG.addColorStop(0, '#0f0a16'); barG.addColorStop(0.5, '#4a3d52'); barG.addColorStop(0.6, '#e8ddf0'); barG.addColorStop(0.72, '#4a3d52'); barG.addColorStop(1, '#0f0a16');
@@ -1218,16 +1220,18 @@
     ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 1; ctx.stroke();
     ctx.restore();
 
-    // Headrest silhouette behind the driver photo, for seated depth
-    const seatCx = carX + bodyW * 0.5, seatTopY = carY - bodyH * 0.1;
+    // Driver photo — sized and centered in the open cabin first; the
+    // headrest frame is then fit AROUND it, so the two can never mismatch
+    // and leave dead space (previous bug: headrest was sized independently
+    // and taller than the circle, leaving empty black space above it).
+    const seatCx = carX + bodyW * 0.5;
+    const winCx = seatCx, winCy = barTopY + (carY - barTopY) * 0.5;
+    const winR = Math.min(bodyW * 0.42, (carY - barTopY) * 0.46);
+
     ctx.fillStyle = 'rgba(10,6,16,0.9)';
-    drawRoundRect(ctx, seatCx - bodyW * 0.2, seatTopY - bodyH * 0.6, bodyW * 0.4, bodyH * 0.68, bodyH * 0.16);
+    drawRoundRect(ctx, winCx - winR * 1.16, winCy - winR * 1.08, winR * 2.32, winR * 2.18, winR * 0.4);
     ctx.fill();
 
-    // Driver photo — big, clear, centered in the open cabin (the whole point
-    // of the open-top layout: no tiny window squinting the face down).
-    const winCx = seatCx, winCy = barTopY + (carY - barTopY) * 0.52;
-    const winR = Math.min(bodyW * 0.31, (carY - barTopY) * 0.48);
     ctx.save();
     ctx.beginPath();
     ctx.arc(winCx, winCy, winR, 0, Math.PI * 2);
