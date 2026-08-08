@@ -1250,6 +1250,18 @@
     ctx.restore();
   }
 
+  // Shrinks a font size until the text fits maxWidth, instead of letting
+  // long names/roles run past the card edge — the "going to the side" bug.
+  function fitFontSize(text, basePx, weight, family, maxWidth, minPx) {
+    let size = basePx;
+    while (size > minPx) {
+      ctx.font = `${weight} ${size}px ${family}`;
+      if (ctx.measureText(text).width <= maxWidth) break;
+      size -= 2;
+    }
+    return size;
+  }
+
   function drawWindStreaks(x0, y0, w, laneGap, phase) {
     ctx.save();
     ctx.strokeStyle = '#ffffff';
@@ -1666,12 +1678,16 @@
     avatarBottomY = pCy + pR;
     }
 
-    // Name & Role
+    // Name & Role — font shrinks to fit so a long name never runs past the
+    // card edges instead of overflowing sideways.
+    const maxTextW = cardW - 90;
     const name = (fName.value || 'YOUR NAME').toUpperCase();
-    drawOutlineText(name, W / 2, avatarBottomY + 70, 'bold 38px Arial, sans-serif', '#ffffff', '#000000', 6);
+    const nameSize = fitFontSize(name, 38, 'bold', 'Arial, sans-serif', maxTextW, 20);
+    drawOutlineText(name, W / 2, avatarBottomY + 70, `bold ${nameSize}px Arial, sans-serif`, '#ffffff', '#000000', 6);
 
     const role = (fRole.value || 'FULLSTACK BUILDER').toUpperCase();
-    drawOutlineText(role, W / 2, avatarBottomY + 118, 'bold 22px Arial, sans-serif', theme.accentB, '#000000', 4);
+    const roleSize = fitFontSize(role, 22, 'bold', 'Arial, sans-serif', maxTextW, 14);
+    drawOutlineText(role, W / 2, avatarBottomY + 118, `bold ${roleSize}px Arial, sans-serif`, theme.accentB, '#000000', 4);
 
     // Achievement / title badge — same pill treatment as the PFP frame's
     // event stamp, just was never actually drawn on the pass before. Given
