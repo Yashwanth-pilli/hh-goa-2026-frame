@@ -391,9 +391,46 @@
   }
 
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Ambient backdrop: on wide screens the centered 490px card leaves big
+     flat margins either side — drifting blobs + twinkling stars keep that
+     space alive instead of a static gradient. Pure CSS, no canvas cost. */
+  .ambient-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+  .ambient-bg .blob { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.4; animation: driftBlob ease-in-out infinite alternate; }
+  .ambient-bg .b1 { width: 460px; height: 460px; background: var(--coral); top: -12%; left: -10%; animation-duration: 26s; }
+  .ambient-bg .b2 { width: 400px; height: 400px; background: var(--teal); bottom: -14%; right: -8%; animation-duration: 32s; animation-delay: -8s; }
+  .ambient-bg .b3 { width: 320px; height: 320px; background: var(--amber); top: 38%; right: 6%; animation-duration: 22s; animation-delay: -4s; }
+  .ambient-bg .b4 { width: 320px; height: 320px; background: var(--gold); bottom: 30%; left: 4%; animation-duration: 28s; animation-delay: -14s; }
+  @keyframes driftBlob { from { transform: translate(0, 0) scale(1); } to { transform: translate(50px, -40px) scale(1.18); } }
+  .ambient-bg .stars {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1.6px 1.6px at 8% 12%, #fff, transparent),
+      radial-gradient(1.6px 1.6px at 22% 68%, #fff, transparent),
+      radial-gradient(1.2px 1.2px at 35% 22%, #fff, transparent),
+      radial-gradient(1.6px 1.6px at 48% 78%, #fff, transparent),
+      radial-gradient(1.2px 1.2px at 62% 15%, #fff, transparent),
+      radial-gradient(1.6px 1.6px at 74% 55%, #fff, transparent),
+      radial-gradient(1.2px 1.2px at 85% 30%, #fff, transparent),
+      radial-gradient(1.6px 1.6px at 92% 72%, #fff, transparent),
+      radial-gradient(1.2px 1.2px at 15% 45%, #fff, transparent),
+      radial-gradient(1.6px 1.6px at 55% 40%, #fff, transparent);
+    background-repeat: no-repeat;
+    animation: twinkleStars 5s ease-in-out infinite alternate;
+  }
+  @keyframes twinkleStars { 0% { opacity: 0.25; } 50% { opacity: 0.85; } 100% { opacity: 0.35; } }
+  .wrap { position: relative; z-index: 1; }
 </style>
 </head>
 <body>
+
+<div class="ambient-bg" aria-hidden="true">
+  <span class="blob b1"></span>
+  <span class="blob b2"></span>
+  <span class="blob b3"></span>
+  <span class="blob b4"></span>
+  <div class="stars"></div>
+</div>
 
 <div class="wrap">
   <header>
