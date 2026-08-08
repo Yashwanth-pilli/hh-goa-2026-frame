@@ -430,30 +430,47 @@
      active vibe/theme (see syncAmbient in the script) instead of one
      fixed static palette: sunny vibes read bright, night vibes read deep
      and cool. Pure CSS, no canvas cost. */
-  .ambient-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+  .ambient-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; filter: saturate(0.82); }
   .ambient-bg .blob { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.3; animation: driftBlob ease-in-out infinite alternate; transition: background-color 1.4s ease; }
   .ambient-bg .b1 { width: 460px; height: 460px; background: var(--vibe1); top: -12%; left: -10%; animation-duration: 26s; }
   .ambient-bg .b2 { width: 400px; height: 400px; background: var(--vibe3); bottom: -14%; right: -8%; animation-duration: 32s; animation-delay: -8s; }
   .ambient-bg .b3 { width: 320px; height: 320px; background: var(--vibe2); top: 38%; right: 6%; animation-duration: 22s; animation-delay: -4s; }
   .ambient-bg .b4 { width: 320px; height: 320px; background: var(--vibe4); bottom: 30%; left: 4%; animation-duration: 28s; animation-delay: -14s; }
-  @keyframes driftBlob { from { transform: translate(0, 0) scale(1); } to { transform: translate(50px, -40px) scale(1.18); } }
+  /* Wandering path with irregular stops instead of a straight there-and-back
+     tween — real drift doesn't move on a rail. */
+  @keyframes driftBlob {
+    0% { transform: translate(0, 0) scale(1); }
+    30% { transform: translate(28px, -22px) scale(1.06); }
+    58% { transform: translate(52px, -12px) scale(1.15); }
+    80% { transform: translate(34px, -38px) scale(1.1); }
+    100% { transform: translate(50px, -40px) scale(1.18); }
+  }
   .ambient-bg .stars {
     position: absolute; inset: 0;
     background-image:
       radial-gradient(1.6px 1.6px at 8% 12%, #fff, transparent),
-      radial-gradient(1.6px 1.6px at 22% 68%, #fff, transparent),
       radial-gradient(1.2px 1.2px at 35% 22%, #fff, transparent),
-      radial-gradient(1.6px 1.6px at 48% 78%, #fff, transparent),
       radial-gradient(1.2px 1.2px at 62% 15%, #fff, transparent),
-      radial-gradient(1.6px 1.6px at 74% 55%, #fff, transparent),
       radial-gradient(1.2px 1.2px at 85% 30%, #fff, transparent),
+      radial-gradient(1.2px 1.2px at 15% 45%, #fff, transparent);
+    background-repeat: no-repeat;
+    animation: twinkleStarsA 4.3s ease-in-out infinite alternate;
+  }
+  .ambient-bg .stars-b {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(1.6px 1.6px at 22% 68%, #fff, transparent),
+      radial-gradient(1.6px 1.6px at 48% 78%, #fff, transparent),
+      radial-gradient(1.6px 1.6px at 74% 55%, #fff, transparent),
       radial-gradient(1.6px 1.6px at 92% 72%, #fff, transparent),
-      radial-gradient(1.2px 1.2px at 15% 45%, #fff, transparent),
       radial-gradient(1.6px 1.6px at 55% 40%, #fff, transparent);
     background-repeat: no-repeat;
-    animation: twinkleStars 5s ease-in-out infinite alternate;
+    animation: twinkleStarsB 6.1s ease-in-out infinite alternate;
+    animation-delay: -1.8s;
   }
-  @keyframes twinkleStars { 0% { opacity: 0.25; } 50% { opacity: 0.85; } 100% { opacity: 0.35; } }
+  /* Two different stars-only twinkle so they don't pulse in lockstep. */
+  @keyframes twinkleStarsA { 0% { opacity: 0.25; } 45% { opacity: 0.85; } 100% { opacity: 0.35; } }
+  @keyframes twinkleStarsB { 0% { opacity: 0.3; } 60% { opacity: 0.8; } 100% { opacity: 0.28; } }
 
   /* Shore glow — a warm reflection band low on the page, like light
      spilling across water at dusk/night in the reference mood. */
@@ -477,6 +494,16 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     background-size: 180px 180px;
   }
+
+  /* Warm light-grade wash tying the whole page under one consistent cast
+     instead of every element carrying its own independently saturated hue —
+     the thing that makes a scene read as one place, lit one way. */
+  .grade {
+    position: fixed; inset: 0; z-index: 4; pointer-events: none;
+    background: radial-gradient(ellipse at 70% 15%, rgba(255, 190, 120, 0.10), transparent 60%),
+                linear-gradient(165deg, rgba(255, 150, 90, 0.05), rgba(20, 10, 35, 0.08) 70%);
+    mix-blend-mode: soft-light;
+  }
 </style>
 </head>
 <body>
@@ -487,9 +514,11 @@
   <span class="blob b3"></span>
   <span class="blob b4"></span>
   <div class="stars"></div>
+  <div class="stars-b"></div>
   <div class="horizon"></div>
 </div>
 
+<div class="grade" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 
 <div class="wrap">
@@ -1090,7 +1119,11 @@
       const wy = seaY + 14 + wLine * 15;
       bgCtx.beginPath();
       for (let x = 0; x <= w; x += 14) {
-        const py = wy + Math.sin(x / 42 + t * 1.7 + wLine * 1.3) * 4;
+        // Two out-of-sync frequencies summed, like real chop riding a swell
+        // — a single sine reads as a perfectly repeating loop.
+        const py = wy
+          + Math.sin(x / 42 + t * 1.7 + wLine * 1.3) * 4
+          + Math.sin(x / 17 + t * 2.6 + wLine * 0.6) * 1.4;
         if (x === 0) bgCtx.moveTo(x, py); else bgCtx.lineTo(x, py);
       }
       bgCtx.globalAlpha = 0.55 - wLine * 0.14;
