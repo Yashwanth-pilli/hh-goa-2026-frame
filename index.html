@@ -1061,49 +1061,87 @@
     }
     ctx.restore();
 
+    // Contact shadow — grounds the jeep on the road instead of it floating
+    ctx.save();
+    const shadowG = ctx.createRadialGradient(carX + bodyW * 0.5, wAY + wheelR * 0.55, wheelR * 0.2, carX + bodyW * 0.5, wAY + wheelR * 0.55, bodyW * 0.62);
+    shadowG.addColorStop(0, 'rgba(0,0,0,0.55)'); shadowG.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = shadowG;
+    ctx.beginPath(); ctx.ellipse(carX + bodyW * 0.5, wAY + wheelR * 0.55, bodyW * 0.62, wheelR * 0.5, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+
     [carX + bodyW * 0.2, carX + bodyW * 0.82].forEach(wx => {
       ctx.save();
-      ctx.fillStyle = '#2f2436';
+      const tireG = ctx.createRadialGradient(wx - wheelR * 0.3, wAY - wheelR * 0.3, wheelR * 0.1, wx, wAY, wheelR);
+      tireG.addColorStop(0, '#4a3d52'); tireG.addColorStop(0.7, '#2f2436'); tireG.addColorStop(1, '#17111c');
+      ctx.fillStyle = tireG;
       ctx.beginPath(); ctx.arc(wx, wAY, wheelR, 0, Math.PI * 2); ctx.fill();
       ctx.strokeStyle = 'rgba(255,238,190,0.5)'; ctx.lineWidth = 1.5; ctx.stroke();
       ctx.translate(wx, wAY);
       ctx.rotate(t * 5.5);
-      ctx.strokeStyle = 'rgba(255,255,255,0.75)';
-      ctx.lineWidth = wheelR * 0.16;
+      ctx.strokeStyle = 'rgba(20,15,25,0.85)';
+      ctx.lineWidth = wheelR * 0.17;
       ctx.lineCap = 'round';
-      for (let tread = 0; tread < 8; tread++) {
-        const a = (tread * Math.PI * 2) / 8;
+      for (let tread = 0; tread < 10; tread++) {
+        const a = (tread * Math.PI * 2) / 10;
         ctx.beginPath();
-        ctx.moveTo(Math.cos(a) * wheelR * 0.72, Math.sin(a) * wheelR * 0.72);
-        ctx.lineTo(Math.cos(a) * wheelR * 0.92, Math.sin(a) * wheelR * 0.92);
+        ctx.moveTo(Math.cos(a) * wheelR * 0.86, Math.sin(a) * wheelR * 0.86);
+        ctx.lineTo(Math.cos(a) * wheelR * 0.98, Math.sin(a) * wheelR * 0.98);
         ctx.stroke();
       }
       ctx.restore();
       ctx.save();
       ctx.translate(wx, wAY);
-      ctx.fillStyle = '#3a3040';
+      const rimG = ctx.createRadialGradient(-wheelR * 0.15, -wheelR * 0.15, wheelR * 0.05, 0, 0, wheelR * 0.44);
+      rimG.addColorStop(0, '#fdf6e3'); rimG.addColorStop(0.55, theme.accentB || '#ffb648'); rimG.addColorStop(1, '#8a5a1f');
+      ctx.fillStyle = rimG;
       ctx.beginPath(); ctx.arc(0, 0, wheelR * 0.42, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = theme.accentB || '#ffb648';
-      ctx.lineWidth = 2.5; ctx.stroke();
+      ctx.strokeStyle = 'rgba(0,0,0,0.4)'; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.fillStyle = 'rgba(40,30,20,0.85)';
+      for (let spoke = 0; spoke < 5; spoke++) {
+        const a = (spoke * Math.PI * 2) / 5;
+        ctx.beginPath();
+        ctx.ellipse(Math.cos(a) * wheelR * 0.24, Math.sin(a) * wheelR * 0.24, wheelR * 0.08, wheelR * 0.14, a, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = '#241a30';
+      ctx.beginPath(); ctx.arc(0, 0, wheelR * 0.08, 0, Math.PI * 2); ctx.fill();
       ctx.restore();
     });
 
-    // Chassis (flat 4x4 body: rear deck + cabin step + hood)
+    // Chassis — glossy multi-stop paint gradient + specular streak, not a flat fill
+    const chassisPath = () => {
+      ctx.beginPath();
+      ctx.moveTo(carX, carY + bodyH);
+      ctx.lineTo(carX, carY + bodyH * 0.35);
+      ctx.lineTo(carX + bodyW * 0.14, carY + bodyH * 0.1);
+      ctx.lineTo(carX + bodyW * 0.86, carY + bodyH * 0.1);
+      ctx.lineTo(carX + bodyW * 0.98, carY + bodyH * 0.42);
+      ctx.lineTo(carX + bodyW, carY + bodyH * 0.42);
+      ctx.lineTo(carX + bodyW, carY + bodyH);
+      ctx.closePath();
+    };
     const chassisG = ctx.createLinearGradient(carX, carY, carX, carY + bodyH);
     chassisG.addColorStop(0, theme.accentB || '#ffb648');
+    chassisG.addColorStop(0.32, '#fff2cf');
+    chassisG.addColorStop(0.42, theme.accentB || '#ffb648');
     chassisG.addColorStop(1, theme.accentA || '#ff5e62');
     ctx.fillStyle = chassisG;
-    ctx.beginPath();
-    ctx.moveTo(carX, carY + bodyH);
-    ctx.lineTo(carX, carY + bodyH * 0.35);
-    ctx.lineTo(carX + bodyW * 0.14, carY + bodyH * 0.1);
-    ctx.lineTo(carX + bodyW * 0.86, carY + bodyH * 0.1);
-    ctx.lineTo(carX + bodyW * 0.98, carY + bodyH * 0.42);
-    ctx.lineTo(carX + bodyW, carY + bodyH * 0.42);
-    ctx.lineTo(carX + bodyW, carY + bodyH);
-    ctx.closePath();
+    chassisPath();
     ctx.fill();
-    ctx.lineWidth = 2.5; ctx.strokeStyle = '#ffffff'; ctx.stroke();
+    ctx.save();
+    chassisPath();
+    ctx.clip();
+    ctx.fillStyle = 'rgba(0,0,0,0.28)';
+    ctx.fillRect(carX, carY + bodyH * 0.75, bodyW, bodyH * 0.3);
+    ctx.restore();
+    ctx.lineWidth = 2.5; ctx.strokeStyle = '#2a1c10'; ctx.globalAlpha = 0.4; ctx.stroke(); ctx.globalAlpha = 1;
+    ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.stroke();
+    // Door crease line for panel detail
+    ctx.strokeStyle = 'rgba(0,0,0,0.22)'; ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(carX + bodyW * 0.5, carY + bodyH * 0.18);
+    ctx.lineTo(carX + bodyW * 0.5, carY + bodyH * 0.9);
+    ctx.stroke();
     // Warm rim-light along the top edge, backlit by the sun behind it
     ctx.strokeStyle = 'rgba(255,238,190,0.9)'; ctx.lineWidth = 2;
     ctx.beginPath();
@@ -1111,21 +1149,35 @@
     ctx.lineTo(carX + bodyW * 0.86, carY + bodyH * 0.1);
     ctx.stroke();
 
-    // Roll bar (open-top arch, no roof — matches the "open jeep" template)
+    // Roll bar — brushed-metal gradient tube (open-top arch, no roof)
     const barX0 = carX + bodyW * 0.2, barX1 = carX + bodyW * 0.82;
     const barTopY = carY - bodyH * 0.78;
     ctx.save();
-    ctx.strokeStyle = '#241a30';
+    const barG = ctx.createLinearGradient(barX0, 0, barX1, 0);
+    barG.addColorStop(0, '#0f0a16'); barG.addColorStop(0.5, '#4a3d52'); barG.addColorStop(0.6, '#e8ddf0'); barG.addColorStop(0.72, '#4a3d52'); barG.addColorStop(1, '#0f0a16');
+    ctx.strokeStyle = barG;
     ctx.lineWidth = bodyH * 0.13;
     ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
     ctx.beginPath();
     ctx.moveTo(barX0, carY + bodyH * 0.15);
     ctx.lineTo(barX0, barTopY);
     ctx.lineTo(barX1, barTopY);
     ctx.lineTo(barX1, carY + bodyH * 0.15);
     ctx.stroke();
-    ctx.strokeStyle = theme.accentB || '#ffb648'; ctx.lineWidth = bodyH * 0.13 * 0.4;
-    ctx.stroke();
+    // Bolt joints where the bar meets the body
+    ctx.fillStyle = '#e8ddf0';
+    [barX0, barX1].forEach(bx => {
+      ctx.beginPath(); ctx.arc(bx, carY + bodyH * 0.15, bodyH * 0.05, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.restore();
+
+    // Side mirror
+    ctx.save();
+    ctx.fillStyle = '#241a30';
+    drawRoundRect(ctx, carX + bodyW * 0.16, carY + bodyH * 0.02, bodyW * 0.05, bodyH * 0.14, bodyH * 0.03);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 1; ctx.stroke();
     ctx.restore();
 
     // Headrest silhouette behind the driver photo, for seated depth
@@ -1153,6 +1205,18 @@
     faceLight.addColorStop(0, 'rgba(255,220,160,0.22)'); faceLight.addColorStop(1, 'rgba(255,140,90,0.05)');
     ctx.fillStyle = faceLight;
     ctx.fillRect(winCx - winR, winCy - winR, winR * 2, winR * 2);
+    // Soft rim vignette, like the photo sits recessed in a seat/frame
+    const vignette = ctx.createRadialGradient(winCx, winCy, winR * 0.72, winCx, winCy, winR);
+    vignette.addColorStop(0, 'rgba(0,0,0,0)'); vignette.addColorStop(1, 'rgba(0,0,0,0.4)');
+    ctx.fillStyle = vignette;
+    ctx.fillRect(winCx - winR, winCy - winR, winR * 2, winR * 2);
+    // Diagonal glass-style sheen streak for a "behind glass" cue
+    ctx.globalCompositeOperation = 'lighter';
+    const sheen = ctx.createLinearGradient(winCx - winR, winCy - winR, winCx + winR * 0.2, winCy + winR * 0.2);
+    sheen.addColorStop(0, 'rgba(255,255,255,0.28)'); sheen.addColorStop(0.25, 'rgba(255,255,255,0)'); sheen.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = sheen;
+    ctx.fillRect(winCx - winR, winCy - winR, winR * 2, winR * 2);
+    ctx.globalCompositeOperation = 'source-over';
     ctx.restore();
     ctx.lineWidth = 3; ctx.strokeStyle = '#ffffff';
     ctx.beginPath(); ctx.arc(winCx, winCy, winR, 0, Math.PI * 2); ctx.stroke();
@@ -1160,6 +1224,10 @@
     ctx.beginPath(); ctx.arc(winCx, winCy, winR + 3, 0, Math.PI * 2); ctx.stroke();
 
     // Headlight + grille hint on the hood
+    const hlG = ctx.createRadialGradient(carX + bodyW - 10, carY + bodyH * 0.56, 1, carX + bodyW - 8, carY + bodyH * 0.58, bodyH * 0.15);
+    hlG.addColorStop(0, '#ffffff'); hlG.addColorStop(0.5, '#fff7d6'); hlG.addColorStop(1, 'rgba(255,231,140,0.15)');
+    ctx.fillStyle = hlG;
+    ctx.beginPath(); ctx.arc(carX + bodyW - 8, carY + bodyH * 0.58, bodyH * 0.15, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = '#fff7d6';
     ctx.beginPath(); ctx.arc(carX + bodyW - 8, carY + bodyH * 0.58, bodyH * 0.1, 0, Math.PI * 2); ctx.fill();
     ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 2;
