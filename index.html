@@ -165,18 +165,10 @@
   }
   input[type=file] { display: none; }
 
-  .opt-row {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-
   .shapes-row {
     display: flex;
     gap: 4px;
-    flex: 1;
+    margin-bottom: 8px;
   }
 
   .shape-btn {
@@ -198,25 +190,55 @@
     color: var(--amber);
   }
 
-  .theme-swatches {
+  /* Labeled vibe chips — was a row of plain unlabeled color dots (name
+     only on hover), now each carries a visible short name so it reads as
+     a deliberate choice, not a random swatch. */
+  .vibe-row {
     display: flex;
     gap: 6px;
+    margin-bottom: 10px;
   }
 
-  .swatch {
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
+  .vibe-chip {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 4px 5px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.05);
     cursor: pointer;
-    border: 2px solid transparent;
     transition: all 0.2s var(--ease);
   }
 
-  .swatch.active {
-    border-color: #ffffff;
-    transform: scale(1.15);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+  .vibe-chip .dot {
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.45);
   }
+
+  .vibe-chip .label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+  }
+
+  .vibe-chip.active {
+    border-color: var(--amber);
+    background: rgba(255, 182, 72, 0.15);
+  }
+
+  .vibe-chip.active .dot {
+    border-color: #ffffff;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+  }
+
+  .vibe-chip.active .label { color: var(--amber); }
 
   .sliders-grid {
     display: grid;
@@ -491,7 +513,7 @@
     .ambient-bg .blob, .ambient-bg .stars, .ambient-bg .stars-b, .ambient-bg .horizon {
       animation: none;
     }
-    .tab, button.main-btn, .swatch, .shape-btn { transition: none; }
+    .tab, button.main-btn, .vibe-chip, .shape-btn { transition: none; }
   }
 
   .wrap { position: relative; z-index: 1; }
@@ -551,16 +573,14 @@
       <input type="file" id="fileInput" accept="image/*,.heic,.heif">
     </div>
 
-    <div class="opt-row">
-      <div class="shapes-row">
-        <div class="shape-btn active" data-shape="circle">Circle</div>
-        <div class="shape-btn" data-shape="rounded">Rounded</div>
-        <div class="shape-btn" data-shape="hexagon">Hexagon</div>
-        <div class="shape-btn" data-shape="square">Square</div>
-        <div class="shape-btn" data-shape="car">🚗 Car</div>
-      </div>
-      <div class="theme-swatches" id="themeRow"></div>
+    <div class="shapes-row">
+      <div class="shape-btn active" data-shape="circle">Circle</div>
+      <div class="shape-btn" data-shape="rounded">Rounded</div>
+      <div class="shape-btn" data-shape="hexagon">Hexagon</div>
+      <div class="shape-btn" data-shape="square">Square</div>
+      <div class="shape-btn" data-shape="car">🚗 Car</div>
     </div>
+    <div class="vibe-row" id="themeRow"></div>
 
     <div class="sliders-grid">
       <div class="slider-item">
@@ -634,9 +654,54 @@
 <div class="toast" id="toast"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 <script>
 (function(){
   const DEPLOYMENT_URL = "https://hh-goa-2026-frame-omega.vercel.app/";
+
+  // Built once from the same DEPLOYMENT_URL constant everything else uses,
+  // so the QR code can never drift out of sync with the actual live link —
+  // there's nowhere else for it to point.
+  let qrMatrix = null, qrModuleCount = 0;
+  try {
+    if (typeof qrcode === 'function') {
+      const q = qrcode(0, 'M');
+      q.addData(DEPLOYMENT_URL);
+      q.make();
+      qrModuleCount = q.getModuleCount();
+      qrMatrix = [];
+      for (let r = 0; r < qrModuleCount; r++) {
+        const row = [];
+        for (let c = 0; c < qrModuleCount; c++) row.push(q.isDark(r, c));
+        qrMatrix.push(row);
+      }
+    }
+  } catch (e) { qrMatrix = null; }
+
+  // Drawn once and cached, not regenerated per-frame — content never
+  // changes, so re-encoding on every draw() call (including every frame of
+  // the car scene's animation loop) would be pure waste.
+  function drawQRCode(cx, cy, size) {
+    if (!qrMatrix) return;
+    const pad = size * 0.12;
+    ctx.save();
+    ctx.fillStyle = '#ffffff';
+    drawRoundRect(ctx, cx - size / 2, cy - size / 2, size, size, size * 0.06);
+    ctx.fill();
+    const inner = size - pad * 2;
+    const cell = inner / qrModuleCount;
+    const ox = cx - size / 2 + pad, oy = cy - size / 2 + pad;
+    ctx.fillStyle = '#0c0714';
+    for (let r = 0; r < qrModuleCount; r++) {
+      for (let c = 0; c < qrModuleCount; c++) {
+        if (qrMatrix[r][c]) ctx.fillRect(ox + c * cell, oy + r * cell, cell + 0.6, cell + 0.6);
+      }
+    }
+    ctx.lineWidth = 2.5; ctx.strokeStyle = theme.accentB || '#ffb648';
+    drawRoundRect(ctx, cx - size / 2, cy - size / 2, size, size, size * 0.06);
+    ctx.stroke();
+    ctx.restore();
+  }
 
   const canvas = document.getElementById('canvas');
   const ctx = canvas.getContext('2d');
@@ -700,7 +765,7 @@
 
   const THEMES = [
     {
-      name: 'Goa Sunset Anime',
+      name: 'Goa Sunset Anime', short: 'Sunset',
       sky: ['#17072b', '#3b1049', '#7e2454', '#c94457', '#ff7d4e', '#ffca7a'],
       accentA: '#ff5e62', accentB: '#ffb648', inkOnAccent: '#ffffff',
       capBg: 'rgba(14, 7, 24, 0.95)', capText: '#ffe8c7',
@@ -708,7 +773,7 @@
       orb: ['#fff7e0', '#ffd175', '#ff8c42']
     },
     {
-      name: 'Neon Cyber Vibe',
+      name: 'Neon Cyber Vibe', short: 'Neon',
       sky: ['#06030c', '#120b30', '#2a104f', '#611068', '#a81895', '#ff38ca'],
       accentA: '#00f2fe', accentB: '#ff2ec4', inkOnAccent: '#ffffff',
       capBg: 'rgba(6, 4, 15, 0.95)', capText: '#d8f8ff',
@@ -716,7 +781,7 @@
       orb: ['#ffffff', '#d4f3ff', '#8ab0e6']
     },
     {
-      name: 'Tropical Ocean Vibe',
+      name: 'Tropical Ocean Vibe', short: 'Ocean',
       sky: ['#0b3142', '#14596d', '#228fa0', '#4cc5b9', '#96e8ce', '#e3fff4'],
       accentA: '#ff5e62', accentB: '#ffd166', inkOnAccent: '#ffffff',
       capBg: 'rgba(5, 36, 42, 0.95)', capText: '#e3fff6',
@@ -724,7 +789,7 @@
       orb: ['#ffffff', '#ffebad', '#ffc04d']
     },
     {
-      name: 'Golden Beach Vibe',
+      name: 'Golden Beach Vibe', short: 'Golden',
       sky: ['#241206', '#4a220d', '#964d19', '#d67e27', '#ffb648', '#ffeaab'],
       accentA: '#ffb648', accentB: '#ff7e33', inkOnAccent: '#ffffff',
       capBg: 'rgba(26, 12, 4, 0.95)', capText: '#ffe6b8',
@@ -748,21 +813,31 @@
   syncAmbient(theme);
 
   const swatchEls = THEMES.map((th, i) => {
-    const sw = document.createElement('div');
-    sw.className = 'swatch' + (i === 0 ? ' active' : '');
-    sw.style.background = `linear-gradient(135deg, ${th.accentA}, ${th.accentB})`;
-    sw.title = th.name;
+    const chip = document.createElement('div');
+    chip.className = 'vibe-chip' + (i === 0 ? ' active' : '');
+    chip.title = th.name;
 
-    sw.addEventListener('click', () => {
+    const dot = document.createElement('span');
+    dot.className = 'dot';
+    dot.style.background = `linear-gradient(135deg, ${th.accentA}, ${th.accentB})`;
+
+    const label = document.createElement('span');
+    label.className = 'label';
+    label.textContent = th.short || th.name;
+
+    chip.appendChild(dot);
+    chip.appendChild(label);
+
+    chip.addEventListener('click', () => {
       theme = th;
       syncAmbient(th);
-      document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
-      sw.classList.add('active');
+      document.querySelectorAll('.vibe-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
       draw();
     });
 
-    themeRow.appendChild(sw);
-    return sw;
+    themeRow.appendChild(chip);
+    return chip;
   });
 
   function showToast(msg) {
@@ -1678,22 +1753,29 @@
     avatarBottomY = pCy + pR;
     }
 
-    // Name & Role — font shrinks to fit so a long name never runs past the
-    // card edges instead of overflowing sideways.
+    // Name -> role -> badge -> QR sit centered in the leftover space below
+    // the photo instead of pinned right against it with a dead gap
+    // underneath (was reading as "too far up, wasted space below").
     const maxTextW = cardW - 90;
+    const bottomRowY = cardY + cardH - 45;
+    const zoneTop = avatarBottomY + 20;
+    const zoneBottom = bottomRowY - 30;
+    const zoneHeight = Math.max(200, zoneBottom - zoneTop);
+
     const name = (fName.value || 'YOUR NAME').toUpperCase();
     const nameSize = fitFontSize(name, 38, 'bold', 'Arial, sans-serif', maxTextW, 20);
-    drawOutlineText(name, W / 2, avatarBottomY + 70, `bold ${nameSize}px Arial, sans-serif`, '#ffffff', '#000000', 6);
+    const nameY = zoneTop + zoneHeight * 0.24;
+    drawOutlineText(name, W / 2, nameY, `bold ${nameSize}px Arial, sans-serif`, '#ffffff', '#000000', 6);
 
     const role = (fRole.value || 'FULLSTACK BUILDER').toUpperCase();
     const roleSize = fitFontSize(role, 22, 'bold', 'Arial, sans-serif', maxTextW, 14);
-    drawOutlineText(role, W / 2, avatarBottomY + 118, `bold ${roleSize}px Arial, sans-serif`, theme.accentB, '#000000', 4);
+    const roleY = nameY + 48;
+    drawOutlineText(role, W / 2, roleY, `bold ${roleSize}px Arial, sans-serif`, theme.accentB, '#000000', 4);
 
     // Achievement / title badge — same pill treatment as the PFP frame's
-    // event stamp, just was never actually drawn on the pass before. Given
-    // real breathing room below the role line instead of crowding it.
+    // event stamp, just was never actually drawn on the pass before.
     const badgeText = fBadge.value || 'VERIFIED BUILDER';
-    const badgeY = avatarBottomY + 198;
+    const badgeY = roleY + 80;
     ctx.save();
     ctx.font = 'bold 18px Arial, sans-serif';
     const capW = ctx.measureText(badgeText).width + 48;
@@ -1704,10 +1786,10 @@
     ctx.restore();
     drawOutlineText(badgeText, W / 2, badgeY + 1, 'bold 18px Arial, sans-serif', theme.capText || '#ffe6c2', '#000000', 4);
 
-    // Security-pattern watermark filling the space below the badge — a
-    // bespoke anti-copy texture (diagonal wave lines + a giant faint
-    // monogram), like a real ID card, instead of an empty flat gap.
-    const wmTop = badgeY + 70, wmBottom = cardY + cardH - 100;
+    // Security-pattern watermark behind everything in the zone — a bespoke
+    // anti-copy texture (diagonal wave lines + a giant faint monogram),
+    // like a real ID card, instead of an empty flat gap.
+    const wmTop = zoneTop, wmBottom = zoneBottom;
     if (wmBottom > wmTop) {
       ctx.save();
       ctx.beginPath();
@@ -1741,10 +1823,22 @@
       ctx.restore();
     }
 
+    // Scannable QR to the live app — sized to whatever room is actually
+    // left below the badge, so it never collides with the bottom row
+    // regardless of avatar mode (the car scene leaves much less room than
+    // the plain avatar shapes).
+    const qrGapTop = 26, qrLabelGap = 22;
+    const qrAvail = zoneBottom - (badgeY + 20) - qrGapTop - qrLabelGap;
+    if (qrAvail > 70) {
+      const qrSize = Math.min(170, qrAvail);
+      const qrCenterY = badgeY + 20 + qrGapTop + qrSize / 2;
+      drawQRCode(W / 2, qrCenterY, qrSize);
+      drawOutlineText('SCAN TO VIEW', W / 2, qrCenterY + qrSize / 2 + 20, 'bold 13px monospace', 'rgba(255,255,255,0.65)', '#000000', 2);
+    }
+
     // Bottom info row — Builder ID lower-left, hashtag lower-right, same
     // baseline so they read as one balanced row instead of a lone centered
     // line.
-    const bottomRowY = cardY + cardH - 45;
     drawOutlineText('PASS ID: HH-GOA-2026-8492', cardX + 40, bottomRowY, 'bold 16px monospace', 'rgba(255,255,255,0.85)', '#000000', 3, 'left');
     drawOutlineText('#FrameInGoa', cardX + cardW - 40, bottomRowY, 'bold 16px monospace', theme.accentB || '#ffb648', '#000000', 3, 'right');
   }
