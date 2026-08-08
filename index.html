@@ -14,9 +14,13 @@
 <meta property="og:title" content="HH Goa 2026 — Official Frame & Pass Studio">
 <meta property="og:description" content="Build your official HH Goa 2026 PFP frame or VIP Builder Pass from your own photo, then share to X with #FrameInGoa.">
 <meta property="og:url" content="https://hh-goa-2026-frame-omega.vercel.app/">
+<meta property="og:image" content="https://hh-goa-2026-frame-omega.vercel.app/og.png">
+<meta property="og:image:width" content="550">
+<meta property="og:image:height" content="530">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="HH Goa 2026 — Official Frame & Pass Studio">
 <meta name="twitter:description" content="Build your official HH Goa 2026 PFP frame or VIP Builder Pass from your own photo, then share to X with #FrameInGoa.">
+<meta name="twitter:image" content="https://hh-goa-2026-frame-omega.vercel.app/og.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -482,6 +486,13 @@
     animation: shimmerHorizon 6s ease-in-out infinite alternate;
   }
   @keyframes shimmerHorizon { 0% { opacity: 0.22; } 100% { opacity: 0.4; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ambient-bg .blob, .ambient-bg .stars, .ambient-bg .stars-b, .ambient-bg .horizon {
+      animation: none;
+    }
+    .tab, button.main-btn, .swatch, .shape-btn { transition: none; }
+  }
 
   .wrap { position: relative; z-index: 1; }
 
@@ -1134,15 +1145,34 @@
 
   let animStart = null;
   let carT = 0;
+  let animRafId = null;
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   function animFrame(now) {
     if (!animStart) animStart = now;
     const t = (now - animStart) / 1000;
     carT = t;
     drawSunsetPalmScene(t);
     if (shape === 'car') draw();
-    requestAnimationFrame(animFrame);
+    animRafId = requestAnimationFrame(animFrame);
   }
-  requestAnimationFrame(animFrame);
+
+  if (reduceMotion) {
+    // One static frame instead of a perpetual loop — respects the OS-level
+    // "reduce motion" setting instead of animating regardless.
+    drawSunsetPalmScene(0);
+  } else {
+    animRafId = requestAnimationFrame(animFrame);
+    // Don't burn battery animating a backgrounded tab nobody's looking at.
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        if (animRafId) { cancelAnimationFrame(animRafId); animRafId = null; }
+      } else if (!animRafId) {
+        animStart = null;
+        animRafId = requestAnimationFrame(animFrame);
+      }
+    });
+  }
 
   function applyClipPath(c, cx, cy, r, shapeType) {
     c.beginPath();
