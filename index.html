@@ -710,6 +710,105 @@
     setTimeout(() => toast.classList.remove('show'), 2200);
   }
 
+  // 3x3 sharpen convolution. ponytail: skip above ~2MP — the photo gets
+  // cover-scaled way down into the frame anyway, so sharpening a raw 12MP
+  // phone photo is wasted CPU for a difference nobody will see.
+  function sharpenCanvas(sctx, w, h) {
+    if (w * h > 2000000) return;
+    const imgData = sctx.getImageData(0, 0, w, h);
+    const src = imgData.data;
+    const out = new Uint8ClampedArray(src.length);
+    const k = [0, -1, 0, -1, 5, -1, 0, -1, 0];
+    for (let y = 0; y < h; y++) {
+      for (let x = 0; x < w; x++) {
+        const i = (y * w + x) * 4;
+        if (x === 0 || y === 0 || x === w - 1 || y === h - 1) {
+          out[i] = src[i]; out[i + 1] = src[i + 1]; out[i + 2] = src[i + 2]; out[i + 3] = src[i + 3];
+          continue;
+        }
+        for (let c = 0; c < 3; c++) {
+          let sum = 0, ki = 0;
+          for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+              sum += src[((y + dy) * w + (x + dx)) * 4 + c] * k[ki++];
+            }
+          }
+          out[i + c] = sum;
+        }
+        out[i + 3] = src[i + 3];
+      }
+    }
+    imgData.data.set(out);
+    sctx.putImageData(imgData, 0, 0);
+  }
+
+  // Samples the photo at low-res to check if it's dull (dark / low contrast)
+  // or blurry (low edge energy), and if so returns a full-res enhanced
+  // version as a data URL. Returns null when the photo is already fine —
+  // no point re-encoding a photo that doesn't need it.
+  function enhancePhotoIfNeeded(image) {
+    const w = image.width, h = image.height;
+    if (!w || !h) return null;
+    const s = 64;
+    const sc = document.createElement('canvas'); sc.width = s; sc.height = s;
+    const scx = sc.getContext('2d');
+    scx.drawImage(image, 0, 0, s, s);
+    const data = scx.getImageData(0, 0, s, s).data;
+    const gray = new Float32Array(s * s);
+    let sum = 0;
+    for (let i = 0, p = 0; i < data.length; i += 4, p++) {
+      gray[p] = 0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2];
+      sum += gray[p];
+    }
+    const mean = sum / gray.length;
+    let sumSq = 0;
+    for (let p = 0; p < gray.length; p++) sumSq += (gray[p] - mean) ** 2;
+    const stddev = Math.sqrt(sumSq / gray.length);
+
+    let edgeSum = 0, edgeCount = 0;
+    for (let y = 1; y < s - 1; y++) {
+      for (let x = 1; x < s - 1; x++) {
+        const idx = y * s + x;
+        edgeSum += Math.abs(4 * gray[idx] - gray[idx - 1] - gray[idx + 1] - gray[idx - s] - gray[idx + s]);
+        edgeCount++;
+      }
+    }
+    const edgeAvg = edgeSum / edgeCount;
+
+    const isDull = mean < 95 || stddev < 32;
+    const isBlurry = edgeAvg < 6;
+    if (!isDull && !isBlurry) return null;
+
+    const out = document.createElement('canvas');
+    out.width = w; out.height = h;
+    const octx = out.getContext('2d');
+
+    if (isDull) {
+      const brightBoost = mean < 70 ? 1.35 : mean < 95 ? 1.18 : 1.0;
+      const contrastBoost = stddev < 32 ? 1.25 : 1.0;
+      octx.filter = `brightness(${brightBoost}) contrast(${contrastBoost}) saturate(1.12)`;
+    }
+    octx.drawImage(image, 0, 0, w, h);
+    octx.filter = 'none';
+
+    if (isBlurry) sharpenCanvas(octx, w, h);
+
+    return out.toDataURL('image/jpeg', 0.92);
+  }
+
+  // Runs the photo through enhancePhotoIfNeeded and hands the (possibly
+  // improved) image to onReady. Falls back to the original on any failure —
+  // enhancement is a nice-to-have, never a reason to block the upload.
+  function loadWithEnhance(sourceImage, onReady) {
+    let enhancedUrl = null;
+    try { enhancedUrl = enhancePhotoIfNeeded(sourceImage); } catch (e) { enhancedUrl = null; }
+    if (!enhancedUrl) { onReady(sourceImage, false); return; }
+    const enhImg = new Image();
+    enhImg.onload = () => onReady(enhImg, true);
+    enhImg.onerror = () => onReady(sourceImage, false);
+    enhImg.src = enhancedUrl;
+  }
+
   // Pre-rendered High Quality Demo Builder Avatar Image
   function createSampleBuilderImage() {
     const c = document.createElement('canvas');
@@ -819,12 +918,15 @@
     
     const snappedImage = new Image();
     snappedImage.onload = () => {
-      img = snappedImage;
-      autoDetectVibeOnUpload(snappedImage);
-      offsetX = 0.5; offsetY = 0.5;
-      zoom.value = 100; posX.value = 0; posY.value = 0; rot.value = 0;
-      draw();
-      stopCamera();
+      loadWithEnhance(snappedImage, (finalImage, wasEnhanced) => {
+        img = finalImage;
+        autoDetectVibeOnUpload(finalImage);
+        offsetX = 0.5; offsetY = 0.5;
+        zoom.value = 100; posX.value = 0; posY.value = 0; rot.value = 0;
+        draw();
+        stopCamera();
+        if (wasEnhanced) showToast('Selfie Enhanced ✨');
+      });
     };
     snappedImage.onerror = () => { showToast('Could not process selfie — try again'); stopCamera(); };
     snappedImage.src = tmpCanvas.toDataURL('image/jpeg');
@@ -878,12 +980,14 @@
     reader.onload = (evt) => {
       const loadedImage = new Image();
       loadedImage.onload = () => {
-        img = loadedImage;
-        autoDetectVibeOnUpload(loadedImage);
-        offsetX = 0.5; offsetY = 0.5;
-        zoom.value = 100; posX.value = 0; posY.value = 0; rot.value = 0;
-        draw();
-        showToast('Photo Uploaded!');
+        loadWithEnhance(loadedImage, (finalImage, wasEnhanced) => {
+          img = finalImage;
+          autoDetectVibeOnUpload(finalImage);
+          offsetX = 0.5; offsetY = 0.5;
+          zoom.value = 100; posX.value = 0; posY.value = 0; rot.value = 0;
+          draw();
+          showToast(wasEnhanced ? 'Photo Uploaded — Enhanced ✨' : 'Photo Uploaded!');
+        });
       };
       // Without this, an image that fails to decode (corrupt file, unsupported
       // codec) fails silently: onload never fires, img never updates, nothing
