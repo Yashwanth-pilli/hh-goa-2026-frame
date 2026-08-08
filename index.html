@@ -443,22 +443,6 @@
   }
   @keyframes shimmerHorizon { 0% { opacity: 0.22; } 100% { opacity: 0.4; } }
 
-  /* Palm silhouettes framing the corners, echoing the reference's foreground
-     fronds. Static/decorative — dark regardless of vibe. */
-  .ambient-bg .palm { position: absolute; width: 220px; height: 220px; opacity: 0.5; }
-  .ambient-bg .palm-tl { top: -40px; left: -40px; }
-  .ambient-bg .palm-br { bottom: -50px; right: -50px; transform: rotate(180deg); }
-  .ambient-bg .palm span {
-    position: absolute; top: 50%; left: 50%; width: 140px; height: 46px;
-    background: rgba(8, 4, 14, 0.85);
-    border-radius: 0 100% 0 100%;
-    transform-origin: 0% 50%;
-  }
-  .ambient-bg .palm span:nth-child(1) { transform: rotate(-15deg); }
-  .ambient-bg .palm span:nth-child(2) { transform: rotate(20deg); }
-  .ambient-bg .palm span:nth-child(3) { transform: rotate(55deg); }
-  .ambient-bg .palm span:nth-child(4) { transform: rotate(90deg); }
-
   .wrap { position: relative; z-index: 1; }
 </style>
 </head>
@@ -471,8 +455,6 @@
   <span class="blob b4"></span>
   <div class="stars"></div>
   <div class="horizon"></div>
-  <div class="palm palm-tl"><span></span><span></span><span></span><span></span></div>
-  <div class="palm palm-br"><span></span><span></span><span></span><span></span></div>
 </div>
 
 <div class="wrap">
@@ -1242,8 +1224,10 @@
 
     drawWindStreaks(sx, sy + sceneH * 0.32, sceneW * 0.34, sceneH * 0.05, t * 1.8);
 
-    // --- Open-top jeep, side view ---
-    const bodyW = sceneW * 0.62, bodyH = sceneH * 0.22;
+    // --- Open-top jeep, side view --- (bigger chassis than a real 4x4's
+    // proportions on purpose: it's what buys room for a genuinely large,
+    // clearly-visible driver photo instead of a small one.)
+    const bodyW = sceneW * 0.68, bodyH = sceneH * 0.3;
     const bob = Math.sin(t * 2.4) * (sceneH * 0.006);
     const carX = sx + sceneW * 0.5 - bodyW / 2;
     const carY = roadY - bodyH * 0.5 + bob;
@@ -1352,8 +1336,8 @@
     // Roll bar — brushed-metal gradient tube (open-top arch, no roof).
     // Taller than a real 4x4's bar on purpose: it's what buys headroom for
     // a big, clearly-visible driver photo instead of a small one low down.
-    const barX0 = carX + bodyW * 0.2, barX1 = carX + bodyW * 0.82;
-    const barTopY = carY - bodyH * 1.05;
+    const barX0 = carX + bodyW * 0.14, barX1 = carX + bodyW * 0.86;
+    const barTopY = carY - bodyH * 1.5;
     ctx.save();
     const barG = ctx.createLinearGradient(barX0, 0, barX1, 0);
     barG.addColorStop(0, '#0f0a16'); barG.addColorStop(0.5, '#4a3d52'); barG.addColorStop(0.6, '#e8ddf0'); barG.addColorStop(0.72, '#4a3d52'); barG.addColorStop(1, '#0f0a16');
@@ -1387,8 +1371,10 @@
     // and leave dead space (previous bug: headrest was sized independently
     // and taller than the circle, leaving empty black space above it).
     const seatCx = carX + bodyW * 0.5;
-    const winCx = seatCx, winCy = barTopY + (carY - barTopY) * 0.5;
-    const winR = Math.min(bodyW * 0.42, (carY - barTopY) * 0.46);
+    const cabTop = barTopY + bodyH * 0.12;
+    const cabBottom = carY - bodyH * 0.05;
+    const winCx = seatCx, winCy = (cabTop + cabBottom) * 0.5;
+    const winR = Math.min((barX1 - barX0) * 0.46, (cabBottom - cabTop) * 0.5);
 
     ctx.fillStyle = 'rgba(10,6,16,0.9)';
     drawRoundRect(ctx, winCx - winR * 1.16, winCy - winR * 1.08, winR * 2.32, winR * 2.18, winR * 0.4);
