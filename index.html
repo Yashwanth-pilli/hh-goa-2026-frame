@@ -986,10 +986,11 @@
   }
 
   // "Driving through Goa" scene: uploaded photo rides in an open-top jeep at
-  // golden hour, road + wind streaks + wheels scroll/spin via carT.
-  function drawCarScene(cx, cy, r, t) {
-    const sceneW = r * 2.3, sceneH = r * 1.8;
-    const sx = cx - sceneW / 2, sy = cy - sceneH / 2;
+  // golden hour, road + wind streaks + wheels scroll/spin via carT. Sized to
+  // fill the caller's full frame (not a small centered box) so there's no
+  // mismatched strip of the plain sunset background showing around it.
+  function drawCarScene(sceneCx, sceneTop, sceneW, sceneH, t) {
+    const sx = sceneCx - sceneW / 2, sy = sceneTop;
 
     ctx.save();
     drawRoundRect(ctx, sx, sy, sceneW, sceneH, 28);
@@ -1183,13 +1184,13 @@
     // Headrest silhouette behind the driver photo, for seated depth
     const seatCx = carX + bodyW * 0.5, seatTopY = carY - bodyH * 0.1;
     ctx.fillStyle = 'rgba(10,6,16,0.9)';
-    drawRoundRect(ctx, seatCx - bodyW * 0.16, seatTopY - bodyH * 0.55, bodyW * 0.32, bodyH * 0.62, bodyH * 0.14);
+    drawRoundRect(ctx, seatCx - bodyW * 0.2, seatTopY - bodyH * 0.6, bodyW * 0.4, bodyH * 0.68, bodyH * 0.16);
     ctx.fill();
 
     // Driver photo — big, clear, centered in the open cabin (the whole point
     // of the open-top layout: no tiny window squinting the face down).
     const winCx = seatCx, winCy = barTopY + (carY - barTopY) * 0.52;
-    const winR = Math.min(bodyW * 0.24, (carY - barTopY) * 0.4);
+    const winR = Math.min(bodyW * 0.31, (carY - barTopY) * 0.48);
     ctx.save();
     ctx.beginPath();
     ctx.arc(winCx, winCy, winR, 0, Math.PI * 2);
@@ -1254,9 +1255,12 @@
     ctx.clearRect(0, 0, W, H);
 
     const cx = W / 2, cy = H * 0.44, r = W * 0.34;
+    let carSceneBottom = null;
 
     if (shape === 'car') {
-      drawCarScene(cx, cy, r, carT);
+      const carSceneW = W * 0.94, carSceneTop = H * 0.06, carSceneH = H * 0.66;
+      drawCarScene(cx, carSceneTop, carSceneW, carSceneH, carT);
+      carSceneBottom = carSceneTop + carSceneH;
     } else {
     // 1. Photo Avatar
     ctx.save();
@@ -1285,7 +1289,8 @@
     }
 
     // 3. Vibrant Branding Ribbon (HH GOA 2026)
-    const ribbonW = r * 1.68, ribbonH = 76, ribbonY = cy + r - ribbonH * 0.45;
+    const ribbonW = r * 1.68, ribbonH = 76;
+    const ribbonY = carSceneBottom !== null ? carSceneBottom + 26 : cy + r - ribbonH * 0.45;
     ctx.save();
     ctx.shadowColor = 'rgba(0,0,0,0.65)'; ctx.shadowBlur = 26; ctx.shadowOffsetY = 8;
     
@@ -1340,9 +1345,12 @@
 
     // Avatar
     const pR = 145, pCx = W / 2, pCy = cardY + 255;
+    let avatarBottomY;
 
     if (shape === 'car') {
-      drawCarScene(pCx, pCy, pR, carT);
+      const carSceneW = cardW * 0.82, carSceneTop = cardY + 130, carSceneH = 430;
+      drawCarScene(pCx, carSceneTop, carSceneW, carSceneH, carT);
+      avatarBottomY = carSceneTop + carSceneH;
     } else {
     ctx.save();
     applyClipPath(ctx, pCx, pCy, pR, shape);
@@ -1364,17 +1372,18 @@
     applyClipPath(ctx, pCx, pCy, pR + 3, shape);
     ctx.lineWidth = 6; ctx.strokeStyle = '#ffffff'; ctx.stroke();
     ctx.restore();
+    avatarBottomY = pCy + pR;
     }
 
     // Name & Role
     const name = (fName.value || 'YOUR NAME').toUpperCase();
-    drawOutlineText(name, W / 2, pCy + pR + 70, 'bold 38px Arial, sans-serif', '#ffffff', '#000000', 6);
+    drawOutlineText(name, W / 2, avatarBottomY + 70, 'bold 38px Arial, sans-serif', '#ffffff', '#000000', 6);
 
     const role = (fRole.value || 'FULLSTACK BUILDER').toUpperCase();
-    drawOutlineText(role, W / 2, pCy + pR + 118, 'bold 22px Arial, sans-serif', theme.accentB, '#000000', 4);
+    drawOutlineText(role, W / 2, avatarBottomY + 118, 'bold 22px Arial, sans-serif', theme.accentB, '#000000', 4);
 
     // Ticket-stub divider (fills the dead space above the serial line)
-    const divY = pCy + pR + 172;
+    const divY = avatarBottomY + 172;
     ctx.save();
     ctx.strokeStyle = 'rgba(255,255,255,0.35)';
     ctx.lineWidth = 2;
