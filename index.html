@@ -1571,41 +1571,6 @@
     const role = (fRole.value || 'FULLSTACK BUILDER').toUpperCase();
     drawOutlineText(role, W / 2, avatarBottomY + 118, 'bold 22px Arial, sans-serif', theme.accentB, '#000000', 4);
 
-    // Ticket-stub divider (fills the dead space above the serial line)
-    const divY = avatarBottomY + 172;
-    ctx.save();
-    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
-    ctx.lineWidth = 2;
-    ctx.setLineDash([10, 10]);
-    ctx.beginPath();
-    ctx.moveTo(cardX + 40, divY); ctx.lineTo(cardX + cardW - 40, divY);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle = '#120a20';
-    [cardX, cardX + cardW].forEach(nx => {
-      ctx.beginPath(); ctx.arc(nx, divY, 18, 0, Math.PI * 2); ctx.fill();
-    });
-    ctx.restore();
-
-    drawOutlineText('ANJUNA · GOA', W / 2, divY + 52, 'bold 20px Arial, sans-serif', 'rgba(255,255,255,0.85)', '#000000', 3);
-    drawOutlineText('COASTAL TECH RESIDENCY', W / 2, divY + 84, 'bold 15px Arial, sans-serif', theme.accentB, '#000000', 2);
-
-    // Wave doodle
-    ctx.save();
-    ctx.strokeStyle = theme.accentA || '#ff5e62';
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    const waveY = divY + 132, waveW = cardW * 0.46, waveX0 = W / 2 - waveW / 2;
-    for (let i = 0; i <= 40; i++) {
-      const px = waveX0 + (waveW * i) / 40;
-      const py = waveY + Math.sin(i / 3) * 10;
-      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
-    }
-    ctx.stroke();
-    ctx.restore();
-
-    drawOutlineText('500 BUILDERS · FEB 2026', W / 2, divY + 180, 'bold 16px monospace', 'rgba(255,255,255,0.7)', '#000000', 2);
-
     // Serial
     drawOutlineText('PASS ID: HH-GOA-2026-8492', W / 2, cardY + cardH - 45, 'bold 16px monospace', 'rgba(255,255,255,0.85)', '#000000', 3);
   }
