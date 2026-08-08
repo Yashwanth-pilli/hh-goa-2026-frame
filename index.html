@@ -79,26 +79,26 @@
 
   h1 {
     font-family: 'Outfit', sans-serif;
-    font-size: 26px;
+    font-size: 27px;
     font-weight: 900;
     margin: 0 0 2px;
     letter-spacing: -0.02em;
-    background: linear-gradient(135deg, #ffffff 30%, var(--amber) 70%, #ff8c52 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--ink);
+    text-shadow: 0 2px 18px rgba(255, 182, 72, 0.35);
   }
+
+  h1 .accent { color: var(--amber); }
 
   header p { color: var(--muted); font-size: 13px; margin: 0; }
 
   .tabs {
     display: flex;
     gap: 4px;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.5);
     padding: 4px;
     border-radius: 14px;
     border: 1px solid var(--border);
     margin-bottom: 12px;
-    backdrop-filter: blur(12px);
   }
 
   .tab {
@@ -122,13 +122,12 @@
   }
 
   .controls-box {
-    background: var(--card);
+    background: rgba(14, 6, 22, 0.96);
     border: 1px solid var(--border);
     border-radius: 20px;
     padding: 14px;
     margin-bottom: 12px;
-    backdrop-filter: blur(16px);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.04);
   }
 
   .action-grid {
@@ -261,11 +260,19 @@
   }
 
   .canvas-card {
+    position: relative;
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 20px;
     padding: 12px;
     box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+  }
+
+  .canvas-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--coral), var(--amber), var(--gold));
   }
 
   .canvas-wrap {
@@ -290,6 +297,22 @@
 
   #bgCanvas { z-index: 1; pointer-events: none; }
   #canvas { z-index: 2; background: transparent; touch-action: none; cursor: grab; }
+
+  /* Verification-target corner ticks — reads as "ID card scan frame"
+     instead of a generic rounded preview card. */
+  .vf-corner {
+    position: absolute;
+    width: 22px; height: 22px;
+    z-index: 3;
+    pointer-events: none;
+    border: 2.5px solid var(--amber);
+    opacity: 0.85;
+    filter: drop-shadow(0 0 6px rgba(255, 182, 72, 0.5));
+  }
+  .vf-tl { top: 10px; left: 10px; border-right: none; border-bottom: none; border-radius: 6px 0 0 0; }
+  .vf-tr { top: 10px; right: 10px; border-left: none; border-bottom: none; border-radius: 0 6px 0 0; }
+  .vf-bl { bottom: 10px; left: 10px; border-right: none; border-top: none; border-radius: 0 0 0 6px; }
+  .vf-br { bottom: 10px; right: 10px; border-left: none; border-top: none; border-radius: 0 0 6px 0; }
   #canvas:active { cursor: grabbing; }
 
   .btn-row {
@@ -408,7 +431,7 @@
      fixed static palette: sunny vibes read bright, night vibes read deep
      and cool. Pure CSS, no canvas cost. */
   .ambient-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
-  .ambient-bg .blob { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.4; animation: driftBlob ease-in-out infinite alternate; transition: background-color 1.4s ease; }
+  .ambient-bg .blob { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.3; animation: driftBlob ease-in-out infinite alternate; transition: background-color 1.4s ease; }
   .ambient-bg .b1 { width: 460px; height: 460px; background: var(--vibe1); top: -12%; left: -10%; animation-duration: 26s; }
   .ambient-bg .b2 { width: 400px; height: 400px; background: var(--vibe3); bottom: -14%; right: -8%; animation-duration: 32s; animation-delay: -8s; }
   .ambient-bg .b3 { width: 320px; height: 320px; background: var(--vibe2); top: 38%; right: 6%; animation-duration: 22s; animation-delay: -4s; }
@@ -444,6 +467,16 @@
   @keyframes shimmerHorizon { 0% { opacity: 0.22; } 100% { opacity: 0.4; } }
 
   .wrap { position: relative; z-index: 1; }
+
+  /* Film grain over the whole page — breaks up the flat gradient/blur
+     look that reads as templated AI-app output, cheap and asset-free. */
+  .grain {
+    position: fixed; inset: 0; z-index: 5; pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+  }
 </style>
 </head>
 <body>
@@ -457,10 +490,12 @@
   <div class="horizon"></div>
 </div>
 
+<div class="grain" aria-hidden="true"></div>
+
 <div class="wrap">
   <header>
     <div class="badge">🌴 HH GOA 2026</div>
-    <h1>HH Goa Frame Studio</h1>
+    <h1>HH Goa <span class="accent">Frame</span> Studio</h1>
     <p>Upload a photo or selfie → customize frame → share to X.</p>
   </header>
 
@@ -524,6 +559,10 @@
     <div class="canvas-wrap" id="canvasWrap">
       <canvas id="bgCanvas" width="1080" height="1080"></canvas>
       <canvas id="canvas" width="1080" height="1080"></canvas>
+      <span class="vf-corner vf-tl" aria-hidden="true"></span>
+      <span class="vf-corner vf-tr" aria-hidden="true"></span>
+      <span class="vf-corner vf-bl" aria-hidden="true"></span>
+      <span class="vf-corner vf-br" aria-hidden="true"></span>
     </div>
 
     <div class="btn-row">
@@ -1570,6 +1609,43 @@
 
     const role = (fRole.value || 'FULLSTACK BUILDER').toUpperCase();
     drawOutlineText(role, W / 2, avatarBottomY + 118, 'bold 22px Arial, sans-serif', theme.accentB, '#000000', 4);
+
+    // Security-pattern watermark filling the space below role — a bespoke
+    // anti-copy texture (diagonal wave lines + a giant faint monogram),
+    // like a real ID card, instead of an empty flat gap.
+    const wmTop = avatarBottomY + 150, wmBottom = cardY + cardH - 80;
+    if (wmBottom > wmTop) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(cardX, wmTop, cardW, wmBottom - wmTop);
+      ctx.clip();
+
+      ctx.strokeStyle = theme.accentB || '#ffb648';
+      ctx.globalAlpha = 0.08;
+      ctx.lineWidth = 2;
+      for (let ly = wmTop - 40; ly < wmBottom + 40; ly += 26) {
+        ctx.beginPath();
+        for (let x = 0; x <= cardW; x += 10) {
+          const y = ly + Math.sin((x + ly) / 30) * 8;
+          if (x === 0) ctx.moveTo(cardX + x, y); else ctx.lineTo(cardX + x, y);
+        }
+        ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+
+      ctx.save();
+      ctx.translate(W / 2, (wmTop + wmBottom) / 2);
+      ctx.rotate(-0.08);
+      ctx.font = "900 220px 'Outfit', Arial, sans-serif";
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = theme.accentA || '#ff5e62';
+      ctx.globalAlpha = 0.07;
+      ctx.fillText('HH', 0, 0);
+      ctx.restore();
+
+      ctx.restore();
+    }
 
     // Serial
     drawOutlineText('PASS ID: HH-GOA-2026-8492', W / 2, cardY + cardH - 45, 'bold 16px monospace', 'rgba(255,255,255,0.85)', '#000000', 3);
