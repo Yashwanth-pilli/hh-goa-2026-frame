@@ -120,9 +120,9 @@
   }
 
   .tab.active {
-    background: linear-gradient(135deg, var(--amber), var(--gold));
+    background: linear-gradient(160deg, var(--gold), var(--amber) 60%, #e88a2e);
     color: #1c0c02;
-    box-shadow: 0 4px 14px rgba(255, 182, 72, 0.4);
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.35), 0 5px 14px rgba(255, 182, 72, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.35);
   }
 
   .controls-box {
@@ -188,6 +188,7 @@
     background: rgba(255, 182, 72, 0.25);
     border-color: var(--amber);
     color: var(--amber);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3), 0 3px 8px rgba(255, 182, 72, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
   }
 
   /* Labeled vibe chips — was a row of plain unlabeled color dots (name
@@ -231,6 +232,7 @@
   .vibe-chip.active {
     border-color: var(--amber);
     background: rgba(255, 182, 72, 0.15);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.3), 0 3px 8px rgba(255, 182, 72, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
   }
 
   .vibe-chip.active .dot {
@@ -293,6 +295,13 @@
     padding: 12px;
     box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
     overflow: hidden;
+    transform: perspective(1000px);
+    transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .canvas-card { transition: none; }
   }
 
   .canvas-card::before {
@@ -360,16 +369,21 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    transition: all 0.2s var(--ease);
+    transition: all 0.15s var(--ease);
+    /* Raised-key bevel: a hard bottom edge for depth + an inset sheen along
+       the top, instead of a flat color block. */
+    box-shadow: 0 3px 0 rgba(0, 0, 0, 0.4), 0 7px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
   }
 
-  button.main-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
-  button.main-btn:active { transform: scale(0.96); }
+  button.main-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+  button.main-btn:active {
+    transform: translateY(2px) scale(0.98);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
 
   .btn-dl {
-    background: linear-gradient(135deg, var(--amber), var(--gold));
+    background: linear-gradient(160deg, var(--gold), var(--amber) 55%, #e88a2e);
     color: #1e0d02;
-    box-shadow: 0 4px 14px rgba(255, 182, 72, 0.35);
   }
 
   .btn-share {
@@ -1158,6 +1172,25 @@
     draw();
   });
   window.addEventListener('pointerup', () => dragging = false);
+
+  // Card tilt-on-hover for a bit of real 3D depth instead of a flat panel.
+  // Paused while dragging the photo (reduceMotion already declared below,
+  // used once it exists) so the two interactions don't fight each other.
+  const canvasCardEl = document.querySelector('.canvas-card');
+  if (canvasCardEl) {
+    canvasCardEl.addEventListener('pointermove', e => {
+      if (dragging || (typeof reduceMotion !== 'undefined' && reduceMotion)) return;
+      const r = canvasCardEl.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      canvasCardEl.style.transform = `perspective(1000px) rotateY(${px * 7}deg) rotateX(${-py * 7}deg) scale3d(1.015, 1.015, 1.015)`;
+      canvasCardEl.style.boxShadow = `${-px * 22}px ${14 - py * 12}px 36px rgba(0,0,0,0.6)`;
+    });
+    canvasCardEl.addEventListener('pointerleave', () => {
+      canvasCardEl.style.transform = 'perspective(1000px)';
+      canvasCardEl.style.boxShadow = '';
+    });
+  }
 
   function drawSunsetPalmScene(t) {
     const w = bgCanvas.width, h = bgCanvas.height;
