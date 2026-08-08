@@ -420,6 +420,7 @@
         <div class="shape-btn" data-shape="rounded">Rounded</div>
         <div class="shape-btn" data-shape="hexagon">Hexagon</div>
         <div class="shape-btn" data-shape="square">Square</div>
+        <div class="shape-btn" data-shape="car">🚗 Car</div>
       </div>
       <div class="theme-swatches" id="themeRow"></div>
     </div>
@@ -730,6 +731,7 @@
       draw();
       stopCamera();
     };
+    snappedImage.onerror = () => { showToast('Could not process selfie — try again'); stopCamera(); };
     snappedImage.src = tmpCanvas.toDataURL('image/jpeg');
   });
 
@@ -777,6 +779,7 @@
       catch(err) { showToast('Could not read HEIC — try JPG/PNG'); return; }
     }
     const reader = new FileReader();
+    reader.onerror = () => showToast('Could not read that file — try another');
     reader.onload = (evt) => {
       const loadedImage = new Image();
       loadedImage.onload = () => {
@@ -787,6 +790,10 @@
         draw();
         showToast('Photo Uploaded!');
       };
+      // Without this, an image that fails to decode (corrupt file, unsupported
+      // codec) fails silently: onload never fires, img never updates, nothing
+      // renders, and the user sees no error at all.
+      loadedImage.onerror = () => showToast('Could not load that photo — try a different file');
       loadedImage.src = evt.target.result;
     };
     reader.readAsDataURL(blob);
@@ -823,12 +830,27 @@
     const g = bgCtx.createLinearGradient(0, 0, 0, h);
     s.forEach((col, idx) => g.addColorStop(idx / (s.length - 1), col));
     bgCtx.fillStyle = g; bgCtx.fillRect(0, 0, w, h);
-    
-    // Sun
+
+    // Sun / moon glow
     const sunX = w * 0.76, sunY = h * 0.22;
     const sg = bgCtx.createRadialGradient(sunX, sunY, 15, sunX, sunY, 160);
     sg.addColorStop(0, theme.orb[0]); sg.addColorStop(0.4, theme.orb[1]); sg.addColorStop(1, 'transparent');
     bgCtx.fillStyle = sg; bgCtx.beginPath(); bgCtx.arc(sunX, sunY, 160, 0, Math.PI * 2); bgCtx.fill();
+
+    // Drifting night clouds
+    bgCtx.save();
+    bgCtx.fillStyle = 'rgba(255,255,255,0.10)';
+    for (let i = 0; i < 4; i++) {
+      const speed = 5 + i * 3.4;
+      const baseY = h * (0.1 + i * 0.085);
+      const cw = w * (0.24 + (i % 2) * 0.09);
+      const cx0 = ((t * speed + i * 260) % (w + cw)) - cw;
+      bgCtx.beginPath();
+      bgCtx.ellipse(cx0, baseY, cw * 0.5, cw * 0.16, 0, 0, Math.PI * 2);
+      bgCtx.ellipse(cx0 + cw * 0.3, baseY + cw * 0.05, cw * 0.32, cw * 0.13, 0, 0, Math.PI * 2);
+      bgCtx.fill();
+    }
+    bgCtx.restore();
 
     // Sea
     const seaY = h * 0.72;
@@ -839,13 +861,32 @@
     const sgSand = bgCtx.createLinearGradient(0, sandY, 0, h);
     sgSand.addColorStop(0, theme.sand[0]); sgSand.addColorStop(1, theme.sand[1]);
     bgCtx.fillStyle = sgSand; bgCtx.fillRect(0, sandY, w, h - sandY);
+
+    // Animated wave shimmer riding the sea band
+    bgCtx.save();
+    bgCtx.strokeStyle = 'rgba(255,255,255,0.24)';
+    bgCtx.lineWidth = 2;
+    for (let wLine = 0; wLine < 3; wLine++) {
+      const wy = seaY + 14 + wLine * 15;
+      bgCtx.beginPath();
+      for (let x = 0; x <= w; x += 14) {
+        const py = wy + Math.sin(x / 42 + t * 1.7 + wLine * 1.3) * 4;
+        if (x === 0) bgCtx.moveTo(x, py); else bgCtx.lineTo(x, py);
+      }
+      bgCtx.globalAlpha = 0.55 - wLine * 0.14;
+      bgCtx.stroke();
+    }
+    bgCtx.restore();
   }
 
   let animStart = null;
+  let carT = 0;
   function animFrame(now) {
     if (!animStart) animStart = now;
     const t = (now - animStart) / 1000;
+    carT = t;
     drawSunsetPalmScene(t);
+    if (shape === 'car') draw();
     requestAnimationFrame(animFrame);
   }
   requestAnimationFrame(animFrame);
@@ -926,6 +967,136 @@
     ctx.restore();
   }
 
+  function drawWindStreaks(x0, y0, w, laneGap, phase) {
+    ctx.save();
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineCap = 'round';
+    for (let i = 0; i < 5; i++) {
+      const ly = y0 + i * laneGap;
+      const len = w * (0.16 + (i % 3) * 0.05);
+      const off = ((phase * (60 + i * 12)) % (w + len)) - len;
+      ctx.globalAlpha = 0.5 * (0.4 + 0.6 * Math.sin(i + phase));
+      ctx.lineWidth = 3.5 - (i % 3) * 0.5;
+      ctx.beginPath();
+      ctx.moveTo(x0 + w - off, ly);
+      ctx.lineTo(x0 + w - off - len, ly);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // "Driving through Goa" scene: uploaded photo becomes the driver peeking out
+  // of a moving convertible, road lines + wind streaks scroll via carT.
+  function drawCarScene(cx, cy, r, t) {
+    const sceneW = r * 2.2, sceneH = r * 1.7;
+    const sx = cx - sceneW / 2, sy = cy - sceneH / 2;
+
+    ctx.save();
+    drawRoundRect(ctx, sx, sy, sceneW, sceneH, 28);
+    ctx.clip();
+
+    const skyG = ctx.createLinearGradient(sx, sy, sx, sy + sceneH);
+    skyG.addColorStop(0, theme.sky[0]); skyG.addColorStop(1, theme.sky[3]);
+    ctx.fillStyle = skyG;
+    ctx.fillRect(sx, sy, sceneW, sceneH * 0.74);
+
+    const gx = sx + sceneW * 0.78, gy = sy + sceneH * 0.2;
+    const glow = ctx.createRadialGradient(gx, gy, 4, gx, gy, sceneW * 0.24);
+    glow.addColorStop(0, theme.orb[0]); glow.addColorStop(1, 'transparent');
+    ctx.fillStyle = glow;
+    ctx.beginPath(); ctx.arc(gx, gy, sceneW * 0.24, 0, Math.PI * 2); ctx.fill();
+
+    ctx.fillStyle = theme.water[0];
+    ctx.fillRect(sx, sy + sceneH * 0.58, sceneW, sceneH * 0.16);
+
+    const roadY = sy + sceneH * 0.74;
+    ctx.fillStyle = 'rgba(10,6,18,0.94)';
+    ctx.fillRect(sx, roadY, sceneW, sceneH - (roadY - sy));
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+    ctx.lineWidth = Math.max(3, sceneH * 0.018);
+    ctx.setLineDash([sceneW * 0.07, sceneW * 0.05]);
+    ctx.lineDashOffset = -(t * 90) % (sceneW * 0.12);
+    ctx.beginPath();
+    const laneY = roadY + (sceneH - (roadY - sy)) * 0.5;
+    ctx.moveTo(sx, laneY); ctx.lineTo(sx + sceneW, laneY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    drawWindStreaks(sx, sy + sceneH * 0.4, sceneW * 0.4, sceneH * 0.045, t * 1.6);
+
+    const bodyW = sceneW * 0.56, bodyH = sceneH * 0.24;
+    const bob = Math.sin(t * 2.4) * (sceneH * 0.006);
+    const carX = sx + sceneW * 0.5 - bodyW / 2;
+    const carY = roadY - bodyH * 0.62 + bob;
+    const wheelR = bodyH * 0.42, wAY = carY + bodyH * 0.92;
+
+    [carX + bodyW * 0.24, carX + bodyW * 0.78].forEach(wx => {
+      ctx.save();
+      ctx.fillStyle = '#241a30';
+      ctx.beginPath(); ctx.arc(wx, wAY, wheelR, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = theme.accentB || '#ffb648';
+      ctx.lineWidth = 3; ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      ctx.beginPath(); ctx.arc(wx, wAY, wheelR * 0.28, 0, Math.PI * 2); ctx.fill();
+      ctx.translate(wx, wAY);
+      ctx.rotate(t * 5);
+      ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+      ctx.lineWidth = 2;
+      for (let sp = 0; sp < 3; sp++) {
+        const a = (sp * Math.PI * 2) / 3;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(a) * wheelR * 0.28, Math.sin(a) * wheelR * 0.28);
+        ctx.lineTo(Math.cos(a) * wheelR * 0.78, Math.sin(a) * wheelR * 0.78);
+        ctx.stroke();
+      }
+      ctx.restore();
+    });
+
+    const chassisG = ctx.createLinearGradient(carX, carY, carX + bodyW, carY);
+    chassisG.addColorStop(0, theme.accentA || '#ff5e62');
+    chassisG.addColorStop(1, theme.accentB || '#ffb648');
+    ctx.fillStyle = chassisG;
+    drawRoundRect(ctx, carX, carY, bodyW, bodyH, bodyH * 0.4);
+    ctx.fill();
+    ctx.lineWidth = 2.5; ctx.strokeStyle = '#ffffff'; ctx.stroke();
+
+    const cabW = bodyW * 0.5, cabH = bodyH * 1.05;
+    const cabX = carX + bodyW * 0.24, cabY = carY - cabH * 0.72;
+    ctx.fillStyle = 'rgba(8,4,14,0.92)';
+    drawRoundRect(ctx, cabX, cabY, cabW, cabH, cabH * 0.35);
+    ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = theme.accentB || '#ffb648'; ctx.stroke();
+
+    const winCx = cabX + cabW * 0.5, winCy = cabY + cabH * 0.46;
+    const winRx = cabW * 0.36, winRy = cabH * 0.32;
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(winCx, winCy, winRx, winRy, 0, 0, Math.PI * 2);
+    ctx.clip();
+    if (img && img.complete && img.width > 0) {
+      drawCoverImage(winCx - winRx, winCy - winRy, winRx * 2, winRy * 2, getZoomVal(), offsetX, offsetY, rotationDeg);
+    } else {
+      ctx.fillStyle = '#3a1259';
+      ctx.fillRect(winCx - winRx, winCy - winRy, winRx * 2, winRy * 2);
+    }
+    ctx.restore();
+    ctx.lineWidth = 2.5; ctx.strokeStyle = '#ffffff';
+    ctx.beginPath(); ctx.ellipse(winCx, winCy, winRx, winRy, 0, 0, Math.PI * 2); ctx.stroke();
+
+    ctx.fillStyle = '#fff7d6';
+    ctx.beginPath(); ctx.arc(carX + bodyW - 6, carY + bodyH * 0.62, bodyH * 0.09, 0, Math.PI * 2); ctx.fill();
+
+    ctx.restore();
+
+    ctx.save();
+    drawRoundRect(ctx, sx, sy, sceneW, sceneH, 28);
+    ctx.lineWidth = 5; ctx.strokeStyle = '#ffffff'; ctx.stroke();
+    drawRoundRect(ctx, sx, sy, sceneW, sceneH, 28);
+    ctx.lineWidth = 2.5; ctx.strokeStyle = theme.accentB || '#ffb648'; ctx.stroke();
+    ctx.restore();
+  }
+
   // Format A: PFP Frame
   function drawFormatA() {
     const W = canvas.width, H = canvas.height;
@@ -933,6 +1104,9 @@
 
     const cx = W / 2, cy = H * 0.44, r = W * 0.34;
 
+    if (shape === 'car') {
+      drawCarScene(cx, cy, r, carT);
+    } else {
     // 1. Photo Avatar
     ctx.save();
     applyClipPath(ctx, cx, cy, r, shape);
@@ -957,6 +1131,7 @@
     applyClipPath(ctx, cx, cy, r, shape);
     ctx.lineWidth = 4; ctx.strokeStyle = theme.accentB || '#ffb648'; ctx.stroke();
     ctx.restore();
+    }
 
     // 3. Vibrant Branding Ribbon (HH GOA 2026)
     const ribbonW = r * 1.68, ribbonH = 76, ribbonY = cy + r - ribbonH * 0.45;
@@ -1014,6 +1189,10 @@
 
     // Avatar
     const pR = 145, pCx = W / 2, pCy = cardY + 255;
+
+    if (shape === 'car') {
+      drawCarScene(pCx, pCy, pR, carT);
+    } else {
     ctx.save();
     applyClipPath(ctx, pCx, pCy, pR, shape);
     ctx.clip();
@@ -1034,6 +1213,7 @@
     applyClipPath(ctx, pCx, pCy, pR + 3, shape);
     ctx.lineWidth = 6; ctx.strokeStyle = '#ffffff'; ctx.stroke();
     ctx.restore();
+    }
 
     // Name & Role
     const name = (fName.value || 'YOUR NAME').toUpperCase();
@@ -1041,6 +1221,41 @@
 
     const role = (fRole.value || 'FULLSTACK BUILDER').toUpperCase();
     drawOutlineText(role, W / 2, pCy + pR + 118, 'bold 22px Arial, sans-serif', theme.accentB, '#000000', 4);
+
+    // Ticket-stub divider (fills the dead space above the serial line)
+    const divY = pCy + pR + 172;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([10, 10]);
+    ctx.beginPath();
+    ctx.moveTo(cardX + 40, divY); ctx.lineTo(cardX + cardW - 40, divY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#120a20';
+    [cardX, cardX + cardW].forEach(nx => {
+      ctx.beginPath(); ctx.arc(nx, divY, 18, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.restore();
+
+    drawOutlineText('ANJUNA · GOA', W / 2, divY + 52, 'bold 20px Arial, sans-serif', 'rgba(255,255,255,0.85)', '#000000', 3);
+    drawOutlineText('COASTAL TECH RESIDENCY', W / 2, divY + 84, 'bold 15px Arial, sans-serif', theme.accentB, '#000000', 2);
+
+    // Wave doodle
+    ctx.save();
+    ctx.strokeStyle = theme.accentA || '#ff5e62';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    const waveY = divY + 132, waveW = cardW * 0.46, waveX0 = W / 2 - waveW / 2;
+    for (let i = 0; i <= 40; i++) {
+      const px = waveX0 + (waveW * i) / 40;
+      const py = waveY + Math.sin(i / 3) * 10;
+      if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    drawOutlineText('500 BUILDERS · FEB 2026', W / 2, divY + 180, 'bold 16px monospace', 'rgba(255,255,255,0.7)', '#000000', 2);
 
     // Serial
     drawOutlineText('PASS ID: HH-GOA-2026-8492', W / 2, cardY + cardH - 45, 'bold 16px monospace', 'rgba(255,255,255,0.85)', '#000000', 3);
