@@ -1706,7 +1706,15 @@
     ctx.save();
     ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 40;
     drawRoundRect(ctx, cardX, cardY, cardW, cardH, 36);
-    ctx.fillStyle = 'rgba(18, 10, 35, 0.95)'; ctx.fill();
+    // Card reads the theme's own sky gradient instead of a flat neutral
+    // fill — the card feels like it's sitting inside the vibe instead of
+    // floating over it. Dark wash on top keeps text legible.
+    const cardGrad = ctx.createLinearGradient(0, cardY, 0, cardY + cardH);
+    theme.sky.forEach((col, idx) => cardGrad.addColorStop(idx / (theme.sky.length - 1), col));
+    ctx.fillStyle = cardGrad;
+    ctx.fill();
+    ctx.fillStyle = 'rgba(8, 4, 16, 0.5)';
+    ctx.fill();
     ctx.lineWidth = 2.5; ctx.strokeStyle = theme.accentB; ctx.stroke();
     ctx.restore();
 
